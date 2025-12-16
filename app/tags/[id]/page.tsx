@@ -52,7 +52,9 @@ export default async function TagDetailPage({ params }: TagDetailPageProps) {
     },
   };
 
-  const StatusIcon = statusConfig[tag.status].icon;
+  // Default to pending if status is null
+  const safeStatus = tag.status || "pending";
+  const StatusIcon = statusConfig[safeStatus].icon;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -102,10 +104,10 @@ export default async function TagDetailPage({ params }: TagDetailPageProps) {
               <div className="flex items-center justify-between">
                 <CardTitle>{tag.brands.name} - {tag.category}</CardTitle>
                 <div
-                  className={`flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium ${statusConfig[tag.status].bg} ${statusConfig[tag.status].color}`}
+                  className={`flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium ${statusConfig[safeStatus].bg} ${statusConfig[safeStatus].color}`}
                 >
                   <StatusIcon className="h-4 w-4" />
-                  {statusConfig[tag.status].label}
+                  {statusConfig[safeStatus].label}
                 </div>
               </div>
             </CardHeader>
