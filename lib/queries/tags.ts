@@ -1,12 +1,13 @@
 import { createClient } from "@/lib/supabase/server";
+import type { Database } from "@/lib/supabase/types";
 
 export interface TagFilters {
   brandId?: number;
-  category?: string;
-  era?: string;
-  stitchType?: string;
+  category?: Database["public"]["Enums"]["identifier_category_enum"];
+  era?: Database["public"]["Enums"]["era_enum"];
+  stitchType?: Database["public"]["Enums"]["stitch_enum"];
   originCountry?: string;
-  status?: "pending" | "verified" | "rejected";
+  status?: Database["public"]["Enums"]["status_enum"];
   orderBy?: "verification_score" | "created_at" | "year_start" | "year_end";
   orderDirection?: "asc" | "desc";
 }

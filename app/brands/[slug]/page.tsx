@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { EraGroupedTagGrid } from "@/components/tags/era-grouped-tag-grid";
 import { getBrandBySlug } from "@/lib/queries/brands";
-import { getTags } from "@/lib/queries/tags";
+import { getTags, type TagFilters } from "@/lib/queries/tags";
 
 interface BrandPageProps {
   params: Promise<{ slug: string }>;
@@ -23,8 +23,8 @@ export default async function BrandPage({
   }
 
   // Get filters from search params
-  const category = typeof search.category === "string" ? search.category : undefined;
-  const era = typeof search.era === "string" ? search.era : undefined;
+  const category = typeof search.category === "string" ? search.category as TagFilters["category"] : undefined;
+  const era = typeof search.era === "string" ? search.era as TagFilters["era"] : undefined;
 
   // Fetch tags for this brand, ordered chronologically (newest to oldest)
   const tags = await getTags({

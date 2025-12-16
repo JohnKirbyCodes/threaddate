@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import type { Database } from "@/lib/supabase/types";
 import { revalidatePath } from "next/cache";
 
 interface SubmitTagData {
@@ -54,22 +55,24 @@ export async function submitTag(data: SubmitTagData) {
     } = supabase.storage.from("tag-images").getPublicUrl(filename);
 
     // Insert tag record
+    const tagData = {
+      user_id: user.id,
+      brand_id: data.brandId,
+      category: data.category as Database["public"]["Enums"]["identifier_category_enum"],
+      era: data.era as Database["public"]["Enums"]["era_enum"],
+      year_start: data.yearStart,
+      year_end: data.yearEnd,
+      stitch_type: data.stitchType as Database["public"]["Enums"]["stitch_enum"] | undefined,
+      origin_country: data.originCountry,
+      submission_notes: data.submissionNotes,
+      image_url: publicUrl,
+      status: "pending" as const,
+      verification_score: 0,
+    } satisfies Database["public"]["Tables"]["tags"]["Insert"];
+
     const { data: tag, error: insertError } = await supabase
       .from("tags")
-      .insert({
-        user_id: user.id,
-        brand_id: data.brandId,
-        category: data.category,
-        era: data.era,
-        year_start: data.yearStart,
-        year_end: data.yearEnd,
-        stitch_type: data.stitchType,
-        origin_country: data.originCountry,
-        submission_notes: data.submissionNotes,
-        image_url: publicUrl,
-        status: "pending",
-        verification_score: 0,
-      })
+      .insert(tagData)
       .select()
       .single();
 

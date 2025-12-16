@@ -2,7 +2,7 @@ import Link from "next/link";
 import { FilterPanel } from "@/components/search/filter-panel";
 import { TagGrid } from "@/components/tags/tag-grid";
 import { getBrands, getBrandBySlug } from "@/lib/queries/brands";
-import { getTags } from "@/lib/queries/tags";
+import { getTags, type TagFilters } from "@/lib/queries/tags";
 
 interface SearchPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -14,11 +14,11 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
   // Parse filters from search params
   const brandSlug = typeof search.brand === "string" ? search.brand : undefined;
-  const category = typeof search.category === "string" ? search.category : undefined;
-  const era = typeof search.era === "string" ? search.era : undefined;
-  const stitchType = typeof search.stitch === "string" ? search.stitch : undefined;
+  const category = typeof search.category === "string" ? search.category as TagFilters["category"] : undefined;
+  const era = typeof search.era === "string" ? search.era as TagFilters["era"] : undefined;
+  const stitchType = typeof search.stitch === "string" ? search.stitch as TagFilters["stitchType"] : undefined;
   const originCountry = typeof search.origin === "string" ? search.origin : undefined;
-  const status = typeof search.status === "string" ? search.status as "pending" | "verified" | "rejected" : undefined;
+  const status = typeof search.status === "string" ? search.status as TagFilters["status"] : undefined;
 
   // Get brand ID if brand slug is provided
   let brandId: number | undefined;
