@@ -80,7 +80,7 @@ export default async function TagDetailPage({ params }: TagDetailPageProps) {
               <div className="flex gap-6">
                 <VotingUI
                   tagId={tag.id}
-                  currentScore={tag.verification_score}
+                  currentScore={tag.verification_score || 0}
                   userVote={userVote}
                   isAuthenticated={!!user}
                 />
