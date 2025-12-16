@@ -273,7 +273,7 @@ export default async function TagDetailPage({ params }: TagDetailPageProps) {
             <CardContent className="space-y-2 text-sm text-stone-600">
               <p>
                 <strong>Submitted:</strong>{" "}
-                {new Date(tag.created_at).toLocaleDateString()}
+                {tag.created_at ? new Date(tag.created_at).toLocaleDateString() : "Unknown"}
               </p>
               <p>
                 <strong>Category:</strong> {tag.category}
