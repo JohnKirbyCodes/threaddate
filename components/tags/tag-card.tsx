@@ -76,7 +76,7 @@ export function TagCard({
           </div>
 
           {/* Verification Score */}
-          {safeStatus === "verified" && verificationScore > 0 && (
+          {safeStatus === "verified" && verificationScore !== null && verificationScore > 0 && (
             <div className="absolute bottom-2 left-2 flex items-center gap-1 rounded-full bg-white/90 px-2 py-1 text-xs font-medium text-stone-700 backdrop-blur-sm">
               <ArrowUp className="h-3 w-3 text-green-600" />
               {verificationScore}
