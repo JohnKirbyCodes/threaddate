@@ -10,7 +10,7 @@ interface TagCardProps {
   brandName: string;
   category: string;
   era: string;
-  verificationScore: number;
+  verificationScore: number | null;
   status: "pending" | "verified" | "rejected";
 }
 

@@ -5,7 +5,7 @@ interface Tag {
   image_url: string;
   category: string;
   era: string;
-  verification_score: number;
+  verification_score: number | null;
   status: "pending" | "verified" | "rejected";
   brands: {
     name: string;
