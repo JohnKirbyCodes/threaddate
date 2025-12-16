@@ -6,7 +6,7 @@ interface Tag {
   category: string;
   era: string;
   verification_score: number | null;
-  status: "pending" | "verified" | "rejected";
+  status: "pending" | "verified" | "rejected" | null;
   brands: {
     name: string;
   };

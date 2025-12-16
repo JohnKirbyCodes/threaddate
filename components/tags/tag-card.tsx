@@ -11,7 +11,7 @@ interface TagCardProps {
   category: string;
   era: string;
   verificationScore: number | null;
-  status: "pending" | "verified" | "rejected";
+  status: "pending" | "verified" | "rejected" | null;
 }
 
 export function TagCard({
