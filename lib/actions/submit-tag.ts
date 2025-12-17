@@ -33,14 +33,14 @@ export async function submitTag(data: SubmitTagData) {
     const base64Data = data.imageBase64.split(",")[1];
     const buffer = Buffer.from(base64Data, "base64");
 
-    // Generate unique filename
-    const filename = `${user.id}/${Date.now()}.jpg`;
+    // Generate unique filename (use PNG to preserve transparency)
+    const filename = `${user.id}/${Date.now()}.png`;
 
     // Upload image to Supabase Storage
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from("tag-images")
       .upload(filename, buffer, {
-        contentType: "image/jpeg",
+        contentType: "image/png",
         cacheControl: "3600",
       });
 

@@ -94,8 +94,8 @@ export function ImageCropStep({ onNext, initialImage }: ImageCropStepProps) {
       canvas.height
     );
 
-    // Convert to base64
-    const croppedImage = canvas.toDataURL("image/jpeg", 0.9);
+    // Convert to base64 (use PNG to preserve transparency)
+    const croppedImage = canvas.toDataURL("image/png");
     onNext(croppedImage);
   };
 

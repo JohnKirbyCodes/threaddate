@@ -49,12 +49,12 @@ export function TagCard({
     <Link href={`/tags/${id}`}>
       <Card className="group overflow-hidden transition-all hover:shadow-md hover:ring-2 hover:ring-orange-500">
         {/* Image Container */}
-        <div className="relative w-full overflow-hidden bg-white">
+        <div className="relative w-full overflow-hidden bg-white aspect-square">
           {imageUrl ? (
             <img
               src={imageUrl}
               alt={`${brandName} ${category}`}
-              className="w-full h-auto object-contain transition-transform group-hover:scale-105"
+              className="w-full h-full object-contain transition-transform group-hover:scale-105"
               onError={(e) => {
                 e.currentTarget.style.display = 'none';
                 const fallback = e.currentTarget.nextElementSibling;
