@@ -4,12 +4,26 @@ import { NextResponse, type NextRequest } from "next/server";
 export async function middleware(request: NextRequest) {
   const startTime = Date.now();
   const pathname = request.nextUrl.pathname;
+  const { searchParams } = request.nextUrl;
+  const code = searchParams.get("code");
 
   console.log(`[Middleware Start] ${pathname}`, {
     hasCookies: request.cookies.getAll().length > 0,
     cookieCount: request.cookies.getAll().length,
-    cookies: request.cookies.getAll().map(c => ({ name: c.name, hasValue: !!c.value }))
+    cookies: request.cookies.getAll().map(c => ({ name: c.name, hasValue: !!c.value })),
+    hasOAuthCode: !!code
   });
+
+  // Handle OAuth callback code on any page (fallback for misconfigured redirect URLs)
+  if (code && !pathname.startsWith("/auth/callback")) {
+    console.log(`[Middleware] OAuth code detected on ${pathname}, redirecting to /auth/callback`);
+    const callbackUrl = new URL("/auth/callback", request.url);
+    callbackUrl.searchParams.set("code", code);
+    // Preserve the 'next' parameter if it exists, otherwise use current path
+    const next = searchParams.get("next") || pathname;
+    callbackUrl.searchParams.set("next", next);
+    return NextResponse.redirect(callbackUrl);
+  }
 
   let response = NextResponse.next({
     request: {

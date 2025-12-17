@@ -10,10 +10,13 @@ export function GoogleSignInButton() {
     const searchParams = new URLSearchParams(window.location.search);
     const redirect = searchParams.get("redirect") || "/";
 
+    const redirectUrl = `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirect)}`;
+    console.log("[Google Sign In] Initiating OAuth with redirectTo:", redirectUrl);
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirect)}`,
+        redirectTo: redirectUrl,
       },
     });
 
