@@ -1,7 +1,20 @@
-<svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Larger version for Apple devices -->
-  <rect width="180" height="180" fill="#FAFAF9"/>
-  <path d="M30 60L60 30C66 24 72 24 78 30L150 102C156 108 156 114 150 120L120 150C114 156 108 156 102 150L30 78C24 72 24 66 30 60Z" fill="#D97706" stroke="#B45309" stroke-width="3"/>
-  <circle cx="54" cy="54" r="12" fill="#F59E0B"/>
-  <circle cx="54" cy="54" r="6" fill="#FFFFFF"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <!-- Main Tag Body -->
+  <path
+    d="M455.5 106.3l-192-96c-8.7-4.4-18.9-4.4-27.6 0l-192 96C26.7 114.9 16 132.8 16 152v208c0 26.5 21.5 48 48 48h384c26.5 0 48-21.5 48-48V152c0-19.2-10.7-37.1-27.5-45.7z"
+    fill="#EA580C"
+  />
+
+  <!-- Highlight/Detail -->
+  <path
+    d="M48 152l208 104 208-104"
+    stroke="white"
+    stroke-width="24"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-opacity="0.2"
+  />
+
+  <!-- Tag Hole -->
+  <circle cx="256" cy="112" r="32" fill="white" />
 </svg>
