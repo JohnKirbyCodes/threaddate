@@ -8,6 +8,13 @@ export async function GET(request: NextRequest) {
   // if "next" is in param, use it as the redirect URL
   const next = searchParams.get("next") ?? "/";
 
+  console.log("[OAuth Callback] Request received", {
+    hasCode: !!code,
+    next,
+    origin,
+    requestCookies: request.cookies.getAll().map(c => ({ name: c.name, hasValue: !!c.value }))
+  });
+
   if (code) {
     let response = NextResponse.redirect(`${origin}${next}`);
 
@@ -17,9 +24,22 @@ export async function GET(request: NextRequest) {
       {
         cookies: {
           getAll() {
-            return request.cookies.getAll();
+            const cookies = request.cookies.getAll();
+            console.log("[OAuth Callback getAll]", { count: cookies.length });
+            return cookies;
           },
           setAll(cookiesToSet) {
+            console.log("[OAuth Callback setAll]", {
+              count: cookiesToSet.length,
+              cookies: cookiesToSet.map(c => ({
+                name: c.name,
+                hasValue: !!c.value,
+                sameSite: c.options?.sameSite,
+                secure: c.options?.secure,
+                httpOnly: c.options?.httpOnly,
+                path: c.options?.path
+              }))
+            });
             cookiesToSet.forEach(({ name, value, options }) =>
               response.cookies.set(name, value, options)
             );
@@ -28,7 +48,7 @@ export async function GET(request: NextRequest) {
       }
     );
 
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { error, data } = await supabase.auth.exchangeCodeForSession(code);
 
     if (error) {
       console.error("[OAuth Callback Error]", {
@@ -39,7 +59,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(`${origin}/auth/auth-code-error`);
     }
 
-    console.log("[OAuth Callback Success] Redirecting to:", next);
+    console.log("[OAuth Callback Success]", {
+      hasSession: !!data.session,
+      hasUser: !!data.user,
+      userId: data.user?.id,
+      redirectingTo: next,
+      responseCookies: response.cookies.getAll().map(c => ({ name: c.name, hasValue: !!c.value }))
+    });
     return response;
   }
 
