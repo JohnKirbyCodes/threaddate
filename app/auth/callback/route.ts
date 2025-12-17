@@ -30,9 +30,17 @@ export async function GET(request: NextRequest) {
 
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
-    if (!error) {
-      return response;
+    if (error) {
+      console.error("[OAuth Callback Error]", {
+        message: error.message,
+        code: code.substring(0, 10) + "...",
+        origin,
+      });
+      return NextResponse.redirect(`${origin}/auth/auth-code-error`);
     }
+
+    console.log("[OAuth Callback Success] Redirecting to:", next);
+    return response;
   }
 
   // Return the user to an error page with instructions
