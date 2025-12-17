@@ -66,3 +66,29 @@ export async function getFeaturedBrands() {
 
   return data || [];
 }
+
+export async function searchBrands(query: string, limit = 10) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("brands")
+    .select(`
+      id,
+      name,
+      slug,
+      logo_url,
+      verified,
+      tags(count)
+    `)
+    .ilike("name", `%${query}%`)
+    .order("verified", { ascending: false })
+    .order("name", { ascending: true })
+    .limit(limit);
+
+  if (error) {
+    console.error("Error searching brands:", error);
+    return [];
+  }
+
+  return data || [];
+}
