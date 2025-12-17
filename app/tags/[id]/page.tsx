@@ -86,7 +86,7 @@ export default async function TagDetailPage({ params }: TagDetailPageProps) {
                 />
 
                 <div className="flex-1">
-                  <div className="relative aspect-square w-full max-w-lg overflow-hidden rounded-lg bg-stone-100">
+                  <div className="relative aspect-square w-full max-w-lg overflow-hidden rounded-lg bg-white">
                     <img
                       src={tag.image_url}
                       alt={`${tag.brands.name} ${tag.category}`}
@@ -174,7 +174,7 @@ export default async function TagDetailPage({ params }: TagDetailPageProps) {
                 <div className="grid grid-cols-2 gap-4">
                   {tag.tag_evidence.map((evidence) => (
                     <div key={evidence.id} className="space-y-2">
-                      <div className="aspect-square overflow-hidden rounded-md bg-stone-100">
+                      <div className="aspect-square overflow-hidden rounded-md bg-white">
                         <img
                           src={evidence.image_url}
                           alt={evidence.description || "Evidence"}

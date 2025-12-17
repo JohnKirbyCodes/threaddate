@@ -49,7 +49,7 @@ export function TagCard({
     <Link href={`/tags/${id}`}>
       <Card className="group overflow-hidden transition-all hover:shadow-md hover:ring-2 hover:ring-orange-500">
         {/* Image Container */}
-        <div className="relative w-full overflow-hidden bg-stone-100">
+        <div className="relative w-full overflow-hidden bg-white">
           {imageUrl ? (
             <img
               src={imageUrl}
