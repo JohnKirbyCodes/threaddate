@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { UserNav } from "@/components/auth/user-nav";
 import { Button } from "@/components/ui/button";
 import { SearchBar } from "@/components/layout/search-bar";
+import { Logo, LogoIcon } from "@/components/layout/logo";
 
 export async function Navbar() {
   const supabase = await createClient();
@@ -15,13 +16,9 @@ export async function Navbar() {
     <nav className="sticky top-0 z-50 w-full border-b border-stone-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-orange-600 text-white font-bold text-sm">
-            TD
-          </div>
-          <span className="hidden font-bold text-stone-900 sm:inline-block">
-            ThreadDate
-          </span>
+        <Link href="/" className="flex items-center">
+          <Logo className="hidden h-8 sm:block" />
+          <LogoIcon className="h-8 w-8 sm:hidden" />
         </Link>
 
         {/* Desktop Search Bar */}

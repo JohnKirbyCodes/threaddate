@@ -20,6 +20,14 @@ export const metadata: Metadata = {
   title: "ThreadDate - Crowdsourced Vintage Clothing Identifier Database",
   description:
     "Date vintage clothing tags, buttons, zippers, and identifiers. A community-driven database for vintage resale authentication.",
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    apple: [
+      { url: "/apple-icon.svg", type: "image/svg+xml" },
+    ],
+  },
 };
 
 export default function RootLayout({

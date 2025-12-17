@@ -1,0 +1,7 @@
+<svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Larger version for Apple devices -->
+  <rect width="180" height="180" fill="#FAFAF9"/>
+  <path d="M30 60L60 30C66 24 72 24 78 30L150 102C156 108 156 114 150 120L120 150C114 156 108 156 102 150L30 78C24 72 24 66 30 60Z" fill="#D97706" stroke="#B45309" stroke-width="3"/>
+  <circle cx="54" cy="54" r="12" fill="#F59E0B"/>
+  <circle cx="54" cy="54" r="6" fill="#FFFFFF"/>
+</svg>
