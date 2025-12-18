@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
+import { getCountryFlagEmoji } from "@/lib/utils/country-flags";
 
 interface Brand {
   id: number;
@@ -7,6 +8,7 @@ interface Brand {
   slug: string;
   logo_url: string | null;
   founded_year: number | null;
+  country_code?: string | null;
 }
 
 interface BrandGridProps {
@@ -34,6 +36,7 @@ export function BrandGrid({ brands }: BrandGridProps) {
             </div>
             <div className="border-t border-stone-100 bg-white p-3 text-center">
               <h3 className="font-semibold text-stone-900 truncate">
+                {brand.country_code && <span className="mr-1">{getCountryFlagEmoji(brand.country_code)}</span>}
                 {brand.name}
               </h3>
               {brand.founded_year && (

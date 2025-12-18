@@ -17,6 +17,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { getCountryFlagEmoji } from "@/lib/utils/country-flags";
 
 interface Brand {
   id: number;
@@ -25,6 +26,7 @@ interface Brand {
   logo_url: string | null;
   verified?: boolean | null;
   verification_status?: string | null;
+  country_code?: string | null;
 }
 
 interface BrandComboboxProps {
@@ -88,6 +90,7 @@ export function BrandCombobox({
         >
           {selectedBrand ? (
             <span className="flex items-center gap-2">
+              {selectedBrand.country_code && <span>{getCountryFlagEmoji(selectedBrand.country_code)}</span>}
               {selectedBrand.name}
               {selectedBrand.verified ? (
                 <CheckCircle2 className="h-4 w-4 text-green-600" />
@@ -131,7 +134,10 @@ export function BrandCombobox({
                         value === brand.id ? "opacity-100" : "opacity-0"
                       )}
                     />
-                    <span className="flex-1">{brand.name}</span>
+                    <span className="flex-1">
+                      {brand.country_code && <span className="mr-1">{getCountryFlagEmoji(brand.country_code)}</span>}
+                      {brand.name}
+                    </span>
                     <CheckCircle2 className="h-4 w-4 text-green-600" />
                   </CommandItem>
                 ))}
@@ -156,7 +162,10 @@ export function BrandCombobox({
                         value === brand.id ? "opacity-100" : "opacity-0"
                       )}
                     />
-                    <span className="flex-1">{brand.name}</span>
+                    <span className="flex-1">
+                      {brand.country_code && <span className="mr-1">{getCountryFlagEmoji(brand.country_code)}</span>}
+                      {brand.name}
+                    </span>
                     <Clock className="h-4 w-4 text-yellow-600" />
                   </CommandItem>
                 ))}

@@ -5,7 +5,7 @@ export async function getBrands(limit?: number) {
 
   let query = supabase
     .from("brands")
-    .select("id, name, slug, logo_url, verified, verification_status, founded_year, description")
+    .select("id, name, slug, logo_url, verified, verification_status, founded_year, description, country_code")
     .order("verified", { ascending: false }) // Verified brands first
     .order("name", { ascending: true });
 
@@ -46,7 +46,7 @@ export async function getFeaturedBrands() {
     "nike",
     "adidas",
     "champion",
-    "levis",
+    "levi-s",
     "wrangler",
     "carhartt",
   ];
@@ -78,6 +78,7 @@ export async function searchBrands(query: string, limit = 10) {
       slug,
       logo_url,
       verified,
+      country_code,
       tags(count)
     `)
     .ilike("name", `%${query}%`)
@@ -91,4 +92,83 @@ export async function searchBrands(query: string, limit = 10) {
   }
 
   return data || [];
+}
+
+export async function getBrandsWithTagCounts() {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("brands")
+    .select(`
+      id,
+      name,
+      slug,
+      logo_url,
+      verified,
+      verification_status,
+      founded_year,
+      description,
+      country_code,
+      tags(count)
+    `)
+    .order("verified", { ascending: false })
+    .order("name", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching brands with tag counts:", error);
+    return [];
+  }
+
+  // Transform the data to include tag_count
+  return (data || []).map((brand: any) => ({
+    ...brand,
+    tag_count: Array.isArray(brand.tags) ? brand.tags.length : 0,
+    tags: undefined, // Remove the tags array
+  }));
+}
+
+export async function getBrandStats() {
+  const supabase = await createClient();
+
+  // Get total brands
+  const { count: totalBrands, error: totalError } = await supabase
+    .from("brands")
+    .select("*", { count: "exact", head: true });
+
+  if (totalError) {
+    console.error("Error fetching total brands:", totalError);
+    return {
+      totalBrands: 0,
+      verifiedBrands: 0,
+      erasCovered: 0,
+    };
+  }
+
+  // Get verified brands count
+  const { count: verifiedBrands, error: verifiedError } = await supabase
+    .from("brands")
+    .select("*", { count: "exact", head: true })
+    .eq("verified", true);
+
+  if (verifiedError) {
+    console.error("Error fetching verified brands:", verifiedError);
+  }
+
+  // Get unique eras covered from tags
+  const { data: erasData, error: erasError } = await supabase
+    .from("tags")
+    .select("era")
+    .not("era", "is", null);
+
+  if (erasError) {
+    console.error("Error fetching eras:", erasError);
+  }
+
+  const uniqueEras = new Set(erasData?.map((t) => t.era) || []);
+
+  return {
+    totalBrands: totalBrands || 0,
+    verifiedBrands: verifiedBrands || 0,
+    erasCovered: uniqueEras.size,
+  };
 }

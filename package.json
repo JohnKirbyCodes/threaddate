@@ -8,7 +8,12 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "tsx scripts/seed.ts",
-    "seed:brands": "tsx scripts/seed-brands.ts"
+    "seed:brands": "tsx scripts/seed-brands.ts",
+    "update:brands": "tsx scripts/update-brands.ts",
+    "identify:brands": "tsx scripts/identify-new-brands.ts",
+    "validate:brands": "tsx scripts/validate-brand-data.ts",
+    "enrich:brands": "tsx scripts/enrich-brands.ts",
+    "check:brands": "tsx scripts/check-brand-status.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -35,6 +40,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^17.2.3",
     "eslint": "^9",
     "eslint-config-next": "16.0.10",
     "tailwindcss": "^4",

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Building2 } from "lucide-react";
+import { getCountryFlagEmoji } from "@/lib/utils/country-flags";
 
 interface BrandCardProps {
   id: number;
@@ -8,9 +9,10 @@ interface BrandCardProps {
   slug: string;
   logoUrl?: string | null;
   tagCount?: number;
+  countryCode?: string | null;
 }
 
-export function BrandCard({ name, slug, logoUrl, tagCount }: BrandCardProps) {
+export function BrandCard({ name, slug, logoUrl, tagCount, countryCode }: BrandCardProps) {
   return (
     <Link href={`/brands/${slug}`}>
       <Card className="group overflow-hidden transition-all hover:shadow-lg hover:ring-2 hover:ring-orange-500">
@@ -32,6 +34,7 @@ export function BrandCard({ name, slug, logoUrl, tagCount }: BrandCardProps) {
             {/* Brand Info */}
             <div className="flex-1 min-w-0">
               <h3 className="text-lg font-semibold text-stone-900 truncate group-hover:text-orange-600 transition-colors">
+                {countryCode && <span className="mr-1">{getCountryFlagEmoji(countryCode)}</span>}
                 {name}
               </h3>
               {tagCount !== undefined && (

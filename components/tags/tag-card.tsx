@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
-import { ArrowUp, CheckCircle2, Clock, XCircle, Tag } from "lucide-react";
+import { ArrowUp, CheckCircle2, Clock, XCircle } from "lucide-react";
+import { TagImage } from "./tag-image";
 
 interface TagCardProps {
   id: number;
@@ -50,22 +51,11 @@ export function TagCard({
       <Card className="group overflow-hidden transition-all hover:shadow-md hover:ring-2 hover:ring-orange-500">
         {/* Image Container */}
         <div className="relative w-full overflow-hidden bg-white aspect-square">
-          {imageUrl ? (
-            <img
-              src={imageUrl}
-              alt={`${brandName} ${category}`}
-              className="w-full h-full object-contain transition-transform group-hover:scale-105"
-              onError={(e) => {
-                e.currentTarget.style.display = 'none';
-                const fallback = e.currentTarget.nextElementSibling;
-                if (fallback) fallback.classList.remove('hidden');
-              }}
-            />
-          ) : null}
-          <div className={`${imageUrl ? 'hidden' : ''} absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-stone-200 to-stone-300`}>
-            <Tag className="h-12 w-12 text-stone-400 mb-2" />
-            <p className="text-xs text-stone-500 text-center px-4">{category}</p>
-          </div>
+          <TagImage
+            imageUrl={imageUrl}
+            brandName={brandName}
+            category={category}
+          />
 
           {/* Status Badge */}
           <div

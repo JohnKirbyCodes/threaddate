@@ -7,11 +7,6 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "14.1"
-  }
   graphql_public: {
     Tables: {
       [_ in never]: never
@@ -41,6 +36,7 @@ export type Database = {
     Tables: {
       brands: {
         Row: {
+          country_code: string | null
           created_at: string | null
           created_by: string | null
           depop_url: string | null
@@ -61,6 +57,7 @@ export type Database = {
           wikipedia_url: string | null
         }
         Insert: {
+          country_code?: string | null
           created_at?: string | null
           created_by?: string | null
           depop_url?: string | null
@@ -81,6 +78,7 @@ export type Database = {
           wikipedia_url?: string | null
         }
         Update: {
+          country_code?: string | null
           created_at?: string | null
           created_by?: string | null
           depop_url?: string | null
@@ -296,8 +294,38 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      show_limit: { Args: never; Returns: number }
-      show_trgm: { Args: { "": string }; Returns: string[] }
+      gtrgm_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_decompress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_in: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_options: {
+        Args: { "": unknown }
+        Returns: undefined
+      }
+      gtrgm_out: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      set_limit: {
+        Args: { "": number }
+        Returns: number
+      }
+      show_limit: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      show_trgm: {
+        Args: { "": string }
+        Returns: string[]
+      }
     }
     Enums: {
       era_enum:
@@ -491,3 +519,4 @@ export const Constants = {
     },
   },
 } as const
+

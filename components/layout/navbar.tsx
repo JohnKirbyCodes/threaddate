@@ -16,9 +16,12 @@ export async function Navbar() {
     <nav className="sticky top-0 z-50 w-full border-b border-stone-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
-        <Link href="/" className="flex items-center">
+        <Link href="/" className="flex items-center gap-2">
           <Logo className="hidden h-8 sm:block" />
           <LogoIcon className="h-8 w-8 sm:hidden" />
+          <span className="inline-flex items-center rounded-full bg-orange-100 px-2 py-1 text-xs font-semibold text-orange-700 ring-1 ring-inset ring-orange-600/20">
+            BETA
+          </span>
         </Link>
 
         {/* Desktop Search Bar */}
