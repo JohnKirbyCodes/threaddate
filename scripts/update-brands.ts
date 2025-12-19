@@ -47,7 +47,7 @@ async function updateBrands() {
     return {
       name: brand.name,
       slug,
-      logo_url: brand.domain ? `https://logo.clearbit.com/${brand.domain}` : null,
+      logo_url: brand.domain ? `https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://${brand.domain}&size=128` : null,
       website_url: brand.website_url || null,
       wikipedia_url: brand.wikipedia_url || null,
       founded_year: brand.founded_year || null,
