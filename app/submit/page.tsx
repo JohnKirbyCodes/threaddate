@@ -11,6 +11,9 @@ import { CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import type { Database } from "@/lib/supabase/types";
+
+type ClothingType = Database["public"]["Enums"]["clothing_type_enum"];
 
 interface Brand {
   id: number;
@@ -21,6 +24,15 @@ interface Brand {
   verification_status?: string | null;
 }
 
+interface ClothingItem {
+  id: number;
+  name: string;
+  slug: string;
+  type: ClothingType;
+  color?: string | null;
+  status?: string | null;
+}
+
 export default function SubmitPage() {
   const router = useRouter();
   const [step, setStep] = useState(1);
@@ -29,16 +41,20 @@ export default function SubmitPage() {
   const [error, setError] = useState<string | null>(null);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [brandsLoading, setBrandsLoading] = useState(true);
+  const [clothingItems, setClothingItems] = useState<ClothingItem[]>([]);
+  const [clothingItemsLoading, setClothingItemsLoading] = useState(true);
 
-  // Fetch brands from Supabase
+  // Fetch brands and clothing items from Supabase
   useEffect(() => {
-    async function fetchBrands() {
+    async function fetchData() {
+      const supabase = createClient();
+
+      // Fetch brands
       try {
-        const supabase = createClient();
         const { data, error } = await supabase
           .from("brands")
           .select("id, name, slug, logo_url, verified, verification_status")
-          .order("verified", { ascending: false }) // Verified first
+          .order("verified", { ascending: false })
           .order("name", { ascending: true });
 
         if (error) throw error;
@@ -49,9 +65,24 @@ export default function SubmitPage() {
       } finally {
         setBrandsLoading(false);
       }
+
+      // Fetch clothing items
+      try {
+        const { data, error } = await supabase
+          .from("clothing_items")
+          .select("id, name, slug, type, color, status")
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+        setClothingItems(data || []);
+      } catch (err) {
+        console.error("Error fetching clothing items:", err);
+      } finally {
+        setClothingItemsLoading(false);
+      }
     }
 
-    fetchBrands();
+    fetchData();
   }, []);
 
   const handleImageNext = (croppedImage: string) => {
@@ -59,12 +90,12 @@ export default function SubmitPage() {
     setStep(2);
   };
 
-  const handleClassificationNext = (data: { brandId: number; category: string }) => {
+  const handleClassificationNext = (data: { brandId: number; category: string; clothingItemId?: number }) => {
     setFormData({ ...formData, ...data });
     setStep(3);
   };
 
-  const handleBrandCreated = async (newBrandId: number) => {
+  const handleBrandCreated = async () => {
     // Refetch brands to include the newly created one
     const supabase = createClient();
     const { data } = await supabase
@@ -78,6 +109,19 @@ export default function SubmitPage() {
     }
   };
 
+  const handleClothingItemCreated = async () => {
+    // Refetch clothing items to include the newly created one
+    const supabase = createClient();
+    const { data } = await supabase
+      .from("clothing_items")
+      .select("id, name, slug, type, color, status")
+      .order("created_at", { ascending: false });
+
+    if (data) {
+      setClothingItems(data);
+    }
+  };
+
   const handleDetailsNext = (data: any) => {
     setFormData({ ...formData, ...data });
     setStep(4);
@@ -88,6 +132,7 @@ export default function SubmitPage() {
 
     const result = await submitTag({
       brandId: formData.brandId,
+      clothingItemId: formData.clothingItemId,
       category: formData.category,
       era: formData.era,
       yearStart: formData.yearStart,
@@ -216,10 +261,13 @@ export default function SubmitPage() {
         {step === 2 && (
           <ClassificationStep
             brands={brands}
+            clothingItems={clothingItems}
             brandsLoading={brandsLoading}
+            clothingItemsLoading={clothingItemsLoading}
             onNext={handleClassificationNext}
             onBack={() => setStep(1)}
             onBrandCreated={handleBrandCreated}
+            onClothingItemCreated={handleClothingItemCreated}
             initialData={formData}
           />
         )}

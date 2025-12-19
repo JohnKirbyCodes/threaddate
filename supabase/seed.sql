@@ -1,0 +1,2 @@
+-- Seed data for local development
+-- Storage bucket is configured via config.toml [storage.buckets.tag-images]

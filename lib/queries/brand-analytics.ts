@@ -128,7 +128,7 @@ export async function getBrandEraInsights(
   );
 
   // Get newest identifier
-  const newestIdentifier = tags[0]
+  const newestIdentifier = tags[0] && tags[0].created_at
     ? {
         era: tags[0].era || "Unknown",
         createdAt: tags[0].created_at,

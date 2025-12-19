@@ -4,9 +4,14 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { BrandCombobox } from "@/components/ui/brand-combobox";
+import { ClothingCombobox } from "@/components/ui/clothing-combobox";
 import { createBrand } from "@/lib/actions/create-brand";
+import { createClothingItem } from "@/lib/actions/create-clothing-item";
 import { useToast } from "@/hooks/use-toast";
 import { Clock } from "lucide-react";
+import type { Database } from "@/lib/supabase/types";
+
+type ClothingType = Database["public"]["Enums"]["clothing_type_enum"];
 
 interface Brand {
   id: number;
@@ -17,13 +22,25 @@ interface Brand {
   verification_status?: string | null;
 }
 
+interface ClothingItem {
+  id: number;
+  name: string;
+  slug: string;
+  type: ClothingType;
+  color?: string | null;
+  status?: string | null;
+}
+
 interface ClassificationStepProps {
   brands: Brand[];
+  clothingItems: ClothingItem[];
   brandsLoading?: boolean;
-  onNext: (data: { brandId: number; category: string }) => void;
+  clothingItemsLoading?: boolean;
+  onNext: (data: { brandId: number; category: string; clothingItemId?: number }) => void;
   onBack: () => void;
   onBrandCreated: (brandId: number) => Promise<void>;
-  initialData?: { brandId?: number; category?: string };
+  onClothingItemCreated: (clothingItemId: number) => Promise<void>;
+  initialData?: { brandId?: number; category?: string; clothingItemId?: number };
 }
 
 const CATEGORIES = [
@@ -40,13 +57,17 @@ const CATEGORIES = [
 
 export function ClassificationStep({
   brands,
+  clothingItems,
   brandsLoading,
+  clothingItemsLoading,
   onNext,
   onBack,
   onBrandCreated,
+  onClothingItemCreated,
   initialData,
 }: ClassificationStepProps) {
   const [brandId, setBrandId] = useState(initialData?.brandId || 0);
+  const [clothingItemId, setClothingItemId] = useState<number | undefined>(initialData?.clothingItemId);
   const [category, setCategory] = useState(initialData?.category || "");
   const { toast } = useToast();
 
@@ -71,10 +92,29 @@ export function ClassificationStep({
     }
   };
 
+  const handleCreateClothingItem = async (name: string, type: ClothingType) => {
+    const result = await createClothingItem({ name, type });
+
+    if (result.success && result.clothingItem) {
+      await onClothingItemCreated(result.clothingItem.id);
+      setClothingItemId(result.clothingItem.id);
+      toast({
+        title: "Clothing item created!",
+        description: `"${name}" has been added and is pending verification.`,
+      });
+    } else {
+      toast({
+        title: "Error",
+        description: result.error || "Failed to create clothing item",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (brandId && category) {
-      onNext({ brandId, category });
+      onNext({ brandId, category, clothingItemId });
     }
   };
 
@@ -133,6 +173,22 @@ export function ClassificationStep({
             </option>
           ))}
         </Select>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-stone-700 mb-2">
+          Clothing Item <span className="text-stone-500">(Optional)</span>
+        </label>
+        <ClothingCombobox
+          clothingItems={clothingItems}
+          value={clothingItemId}
+          onChange={setClothingItemId}
+          onCreateClothingItem={handleCreateClothingItem}
+          disabled={clothingItemsLoading}
+        />
+        <p className="mt-1 text-xs text-stone-500">
+          Associate this identifier with a specific article of clothing
+        </p>
       </div>
 
       <div className="bg-stone-50 p-4 rounded-lg">

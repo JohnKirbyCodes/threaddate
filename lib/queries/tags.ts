@@ -3,6 +3,7 @@ import type { Database } from "@/lib/supabase/types";
 
 export interface TagFilters {
   brandId?: number;
+  clothingItemId?: number;
   category?: Database["public"]["Enums"]["identifier_category_enum"];
   era?: Database["public"]["Enums"]["era_enum"];
   stitchType?: Database["public"]["Enums"]["stitch_enum"];
@@ -25,6 +26,13 @@ export async function getTags(filters: TagFilters = {}, limit = 20) {
         name,
         slug,
         logo_url
+      ),
+      clothing_items (
+        id,
+        name,
+        slug,
+        type,
+        color
       )
     `
     )
@@ -44,6 +52,10 @@ export async function getTags(filters: TagFilters = {}, limit = 20) {
   // Apply filters
   if (filters.brandId) {
     query = query.eq("brand_id", filters.brandId);
+  }
+
+  if (filters.clothingItemId) {
+    query = query.eq("clothing_item_id", filters.clothingItemId);
   }
 
   if (filters.category) {

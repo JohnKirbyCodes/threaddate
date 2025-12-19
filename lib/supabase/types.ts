@@ -122,6 +122,84 @@ export type Database = {
           },
         ]
       }
+      clothing_items: {
+        Row: {
+          color: string | null
+          created_at: string | null
+          created_by: string
+          description: string | null
+          era: Database["public"]["Enums"]["era_enum"] | null
+          id: number
+          image_url: string | null
+          name: string
+          size: string | null
+          slug: string
+          status: Database["public"]["Enums"]["status_enum"] | null
+          style_number: string | null
+          submission_notes: string | null
+          type: Database["public"]["Enums"]["clothing_type_enum"]
+          verification_score: number | null
+          verified_at: string | null
+          verified_by: string | null
+          year_manufactured: number | null
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string | null
+          created_by: string
+          description?: string | null
+          era?: Database["public"]["Enums"]["era_enum"] | null
+          id?: never
+          image_url?: string | null
+          name: string
+          size?: string | null
+          slug: string
+          status?: Database["public"]["Enums"]["status_enum"] | null
+          style_number?: string | null
+          submission_notes?: string | null
+          type: Database["public"]["Enums"]["clothing_type_enum"]
+          verification_score?: number | null
+          verified_at?: string | null
+          verified_by?: string | null
+          year_manufactured?: number | null
+        }
+        Update: {
+          color?: string | null
+          created_at?: string | null
+          created_by?: string
+          description?: string | null
+          era?: Database["public"]["Enums"]["era_enum"] | null
+          id?: never
+          image_url?: string | null
+          name?: string
+          size?: string | null
+          slug?: string
+          status?: Database["public"]["Enums"]["status_enum"] | null
+          style_number?: string | null
+          submission_notes?: string | null
+          type?: Database["public"]["Enums"]["clothing_type_enum"]
+          verification_score?: number | null
+          verified_at?: string | null
+          verified_by?: string | null
+          year_manufactured?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clothing_items_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clothing_items_verified_by_fkey"
+            columns: ["verified_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -188,6 +266,7 @@ export type Database = {
         Row: {
           brand_id: number
           category: Database["public"]["Enums"]["identifier_category_enum"]
+          clothing_item_id: number | null
           created_at: string | null
           era: Database["public"]["Enums"]["era_enum"]
           id: number
@@ -204,6 +283,7 @@ export type Database = {
         Insert: {
           brand_id: number
           category?: Database["public"]["Enums"]["identifier_category_enum"]
+          clothing_item_id?: number | null
           created_at?: string | null
           era: Database["public"]["Enums"]["era_enum"]
           id?: never
@@ -220,6 +300,7 @@ export type Database = {
         Update: {
           brand_id?: number
           category?: Database["public"]["Enums"]["identifier_category_enum"]
+          clothing_item_id?: number | null
           created_at?: string | null
           era?: Database["public"]["Enums"]["era_enum"]
           id?: never
@@ -239,6 +320,13 @@ export type Database = {
             columns: ["brand_id"]
             isOneToOne: false
             referencedRelation: "brands"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tags_clothing_item_id_fkey"
+            columns: ["clothing_item_id"]
+            isOneToOne: false
+            referencedRelation: "clothing_items"
             referencedColumns: ["id"]
           },
           {
@@ -294,40 +382,27 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      gtrgm_compress: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      gtrgm_decompress: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      gtrgm_in: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      gtrgm_options: {
-        Args: { "": unknown }
-        Returns: undefined
-      }
-      gtrgm_out: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      set_limit: {
-        Args: { "": number }
-        Returns: number
-      }
-      show_limit: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
-      show_trgm: {
-        Args: { "": string }
-        Returns: string[]
-      }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
     }
     Enums: {
+      clothing_type_enum:
+        | "T-Shirt"
+        | "Sweatshirt"
+        | "Hoodie"
+        | "Jacket"
+        | "Coat"
+        | "Jeans"
+        | "Pants"
+        | "Shorts"
+        | "Dress"
+        | "Skirt"
+        | "Hat"
+        | "Shoes"
+        | "Boots"
+        | "Belt"
+        | "Bag"
+        | "Other"
       era_enum:
         | "Pre-1900s"
         | "1900s"
@@ -486,6 +561,24 @@ export const Constants = {
   },
   public: {
     Enums: {
+      clothing_type_enum: [
+        "T-Shirt",
+        "Sweatshirt",
+        "Hoodie",
+        "Jacket",
+        "Coat",
+        "Jeans",
+        "Pants",
+        "Shorts",
+        "Dress",
+        "Skirt",
+        "Hat",
+        "Shoes",
+        "Boots",
+        "Belt",
+        "Bag",
+        "Other",
+      ],
       era_enum: [
         "Pre-1900s",
         "1900s",

@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 
 interface SubmitTagData {
   brandId: number;
+  clothingItemId?: number;
   category: string;
   era: string;
   yearStart?: number;
@@ -58,6 +59,7 @@ export async function submitTag(data: SubmitTagData) {
     const tagData = {
       user_id: user.id,
       brand_id: data.brandId,
+      clothing_item_id: data.clothingItemId,
       category: data.category as Database["public"]["Enums"]["identifier_category_enum"],
       era: data.era as Database["public"]["Enums"]["era_enum"],
       year_start: data.yearStart,
