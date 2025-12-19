@@ -58,7 +58,7 @@ export function EraGroupedTagGrid({ tags }: EraGroupedTagGridProps) {
   return (
     <div className="space-y-8">
       {erasWithTags.map((era) => (
-        <div key={era} className="space-y-4">
+        <div key={era} id={`era-${era.replace(/\s+/g, "-")}`} className="space-y-4 scroll-mt-24">
           {/* Era Header */}
           <div className="border-b border-stone-200 pb-2">
             <h2 className="text-lg font-semibold text-stone-900">{era}</h2>
