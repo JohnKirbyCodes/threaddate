@@ -108,8 +108,7 @@ export async function submitClothingWithIdentifiers(
       slug = `${slug}-${existing.length + 1}`;
     }
 
-    // Using raw object to include origin_country not yet in types
-    const clothingItemData: Record<string, unknown> = {
+    const clothingItemData: Database["public"]["Tables"]["clothing_items"]["Insert"] = {
       name: data.clothingItem.name,
       slug,
       type: data.clothingItem.type,
@@ -126,7 +125,7 @@ export async function submitClothingWithIdentifiers(
 
     const { data: clothingItem, error: clothingError } = await supabase
       .from("clothing_items")
-      .insert(clothingItemData as Database["public"]["Tables"]["clothing_items"]["Insert"])
+      .insert(clothingItemData)
       .select()
       .single();
 
@@ -165,8 +164,7 @@ export async function submitClothingWithIdentifiers(
         data: { publicUrl },
       } = supabase.storage.from("tag-images").getPublicUrl(filename);
 
-      // Insert tag record (using raw object to include position fields not yet in types)
-      const tagData: Record<string, unknown> = {
+      const tagData: Database["public"]["Tables"]["tags"]["Insert"] = {
         user_id: user.id,
         brand_id: data.clothingItem.brandId,
         clothing_item_id: clothingItem.id,
@@ -180,14 +178,13 @@ export async function submitClothingWithIdentifiers(
         image_url: publicUrl,
         status: "pending",
         verification_score: 0,
-        // Position on clothing image (if marked)
         position_x: identifier.positionX ?? null,
         position_y: identifier.positionY ?? null,
       };
 
       const { data: tag, error: tagError } = await supabase
         .from("tags")
-        .insert(tagData as Database["public"]["Tables"]["tags"]["Insert"])
+        .insert(tagData)
         .select()
         .single();
 

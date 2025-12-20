@@ -7,6 +7,11 @@ export type Json =
   | Json[]
 
 export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "14.1"
+  }
   graphql_public: {
     Tables: {
       [_ in never]: never
@@ -135,6 +140,7 @@ export type Database = {
           id: number
           image_url: string | null
           name: string
+          origin_country: string | null
           size: string | null
           slug: string
           status: Database["public"]["Enums"]["status_enum"] | null
@@ -155,6 +161,7 @@ export type Database = {
           id?: never
           image_url?: string | null
           name: string
+          origin_country?: string | null
           size?: string | null
           slug: string
           status?: Database["public"]["Enums"]["status_enum"] | null
@@ -175,6 +182,7 @@ export type Database = {
           id?: never
           image_url?: string | null
           name?: string
+          origin_country?: string | null
           size?: string | null
           slug?: string
           status?: Database["public"]["Enums"]["status_enum"] | null
@@ -275,6 +283,8 @@ export type Database = {
           id: number
           image_url: string
           origin_country: string | null
+          position_x: number | null
+          position_y: number | null
           status: Database["public"]["Enums"]["status_enum"] | null
           stitch_type: Database["public"]["Enums"]["stitch_enum"] | null
           submission_notes: string | null
@@ -292,6 +302,8 @@ export type Database = {
           id?: never
           image_url: string
           origin_country?: string | null
+          position_x?: number | null
+          position_y?: number | null
           status?: Database["public"]["Enums"]["status_enum"] | null
           stitch_type?: Database["public"]["Enums"]["stitch_enum"] | null
           submission_notes?: string | null
@@ -309,6 +321,8 @@ export type Database = {
           id?: never
           image_url?: string
           origin_country?: string | null
+          position_x?: number | null
+          position_y?: number | null
           status?: Database["public"]["Enums"]["status_enum"] | null
           stitch_type?: Database["public"]["Enums"]["stitch_enum"] | null
           submission_notes?: string | null
@@ -615,4 +629,3 @@ export const Constants = {
     },
   },
 } as const
-
