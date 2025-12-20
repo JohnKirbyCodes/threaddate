@@ -2,7 +2,7 @@ import { track } from '@vercel/analytics';
 
 export interface MarketplaceClickParams {
   brand: string;
-  marketplace: 'ebay' | 'poshmark' | 'depop';
+  marketplace: 'ebay' | 'poshmark' | 'depop' | 'amazon';
   placement: 'hero' | 'era-contextual' | 'footer' | 'inline';
   eraContext?: string;
   scrollDepth?: number;
