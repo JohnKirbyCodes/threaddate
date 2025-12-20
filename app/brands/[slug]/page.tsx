@@ -10,6 +10,7 @@ import { BrandTimeline } from "@/components/brands/brand-timeline";
 import { getBrandEraDistribution } from "@/lib/queries/brand-analytics";
 import { getCountryFlagEmoji, getCountryName } from "@/lib/utils/country-flags";
 import { BrandCollectionSchema, BreadcrumbSchema } from "@/components/seo/json-ld";
+import { ImageLightbox } from "@/components/ui/image-lightbox";
 
 interface BrandPageProps {
   params: Promise<{ slug: string }>;
@@ -120,13 +121,15 @@ export default async function BrandPage({
       {/* Brand Header */}
       <div className="mb-8 flex items-center gap-6">
         {brand.logo_url ? (
-          <div className="flex h-24 w-24 items-center justify-center rounded-lg bg-white p-4 shadow-sm ring-1 ring-stone-200">
-            <img
-              src={brand.logo_url}
-              alt={brand.name}
-              className="h-full w-full object-contain"
-            />
-          </div>
+          <ImageLightbox src={brand.logo_url} alt={`${brand.name} logo`}>
+            <button className="flex h-24 w-24 items-center justify-center rounded-lg bg-white p-4 shadow-sm ring-1 ring-stone-200 cursor-zoom-in hover:ring-orange-300 hover:shadow-md transition-all">
+              <img
+                src={brand.logo_url}
+                alt={brand.name}
+                className="h-full w-full object-contain"
+              />
+            </button>
+          </ImageLightbox>
         ) : (
           <div className="relative flex h-24 w-24 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 shadow-md overflow-hidden">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.2),transparent)]" />
