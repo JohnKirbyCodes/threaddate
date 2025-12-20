@@ -1,0 +1,622 @@
+[
+  {
+    "name": "Alstyle (AAA)",
+    "current": {
+      "description": "American Apparel alternative known for wholesale blank t-shirts and basics."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Apex One",
+    "current": {
+      "domain": "apexone.com",
+      "website_url": "https://www.apexone.com",
+      "founded_year": 1970,
+      "description": "Vintage sportswear brand known for sideline jackets and team apparel."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Artex",
+    "current": {
+      "founded_year": 1960,
+      "description": "Vintage sportswear manufacturer known for collegiate and team apparel from the 1970s-80s."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Athletic Works",
+    "current": {
+      "description": "Walmart's athletic apparel brand offering affordable activewear."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Bantam",
+    "current": {
+      "description": "Vintage sportswear brand from the mid-20th century."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Bella+Canvas",
+    "current": {
+      "domain": "bellacanvas.com",
+      "website_url": "https://www.bellacanvas.com",
+      "founded_year": 1992,
+      "description": "Modern blank apparel manufacturer known for soft tri-blend t-shirts."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Big Mac",
+    "current": {
+      "description": "Vintage JCPenney workwear line known for durable work clothes from the 1970s-80s."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Big Smith",
+    "current": {
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Big_Smith",
+      "founded_year": 1916,
+      "description": "Historic American workwear brand known for overalls and work clothes."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Brahma",
+    "current": {
+      "description": "Walmart workwear and work boot brand offering affordable safety footwear."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Brent",
+    "current": {
+      "description": "Vintage American brand from the mid-20th century."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Brockum",
+    "current": {
+      "description": "Vintage concert t-shirt manufacturer known for band merch from the 1970s-90s."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Budweiser",
+    "current": {
+      "description": "American beer brand with extensive promotional apparel and vintage merchandise."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Bugle Boy",
+    "current": {
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Bugle_Boy",
+      "founded_year": 1977,
+      "description": "1980s-90s casual menswear brand known for khakis and affordable fashion."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Camel",
+    "current": {
+      "description": "Cigarette brand known for Joe Camel merchandise and vintage promotional apparel."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Cheddar",
+    "current": {
+      "description": "Vintage apparel brand from the mid-20th century."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Cherokee",
+    "current": {
+      "domain": "cherokeeuniforms.com",
+      "website_url": "https://www.cherokeeuniforms.com",
+      "founded_year": 1973,
+      "description": "Target's affordable basics brand offering scrubs and casual wear."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Chic",
+    "current": {
+      "description": "Contemporary fashion brand."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Coca-Cola",
+    "current": {
+      "description": "Iconic beverage brand with extensive vintage promotional apparel and merchandise."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Croft & Barrow",
+    "current": {
+      "description": "Kohl's private label brand offering affordable classics and basics."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Delta",
+    "current": {
+      "description": "Blank apparel manufacturer known for wholesale t-shirts and screen printing."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "ENYCE",
+    "current": {
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Enyce",
+      "founded_year": 1996,
+      "description": "Urban streetwear brand from the 1990s-2000s hip-hop era."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Faded Glory",
+    "current": {
+      "description": "Walmart's budget apparel brand offering affordable basics and denim."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Five Brother",
+    "current": {
+      "domain": "fivebrother.com",
+      "website_url": "https://www.fivebrother.com",
+      "founded_year": 1890,
+      "description": "American workwear brand known for flannel shirts and heavy-duty clothing."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "George",
+    "current": {
+      "description": "Walmart's budget apparel brand offering affordable clothing and basics."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Giant",
+    "current": {
+      "description": "Vintage bicycle and apparel brand."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Gloria Vanderbilt",
+    "current": {
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Gloria_Vanderbilt",
+      "founded_year": 1976,
+      "description": "Designer jeans brand from the 1970s-80s known for swan logo."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "H Bar C",
+    "current": {
+      "description": "Vintage western wear brand known for pearl snap shirts and cowboy apparel."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Healthknit",
+    "current": {
+      "founded_year": 1900,
+      "description": "American underwear and basics brand known for vintage waffle knit and thermals."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Hercules",
+    "current": {
+      "description": "Vintage workwear brand from the mid-20th century."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Jerzees",
+    "current": {
+      "domain": "jerzees.com",
+      "website_url": "https://www.jerzees.com",
+      "founded_year": 1976,
+      "description": "Blank apparel manufacturer known for wholesale sweatshirts and activewear."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Jimmy'Z",
+    "current": {
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Jimmy%27Z",
+      "founded_year": 1982,
+      "description": "California surf brand from the 1980s known for baggies and surf culture."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Jordache",
+    "current": {
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Jordache",
+      "founded_year": 1978,
+      "description": "1970s-80s designer jeans brand known for horse logo and tight-fitting styles."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Karman",
+    "current": {
+      "description": "Vintage apparel brand."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Key",
+    "current": {
+      "domain": "keyapparel.com",
+      "website_url": "https://www.keyapparel.com",
+      "founded_year": 1908,
+      "description": "American workwear brand known for overalls and durable work clothes."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Kikwear",
+    "current": {
+      "domain": "kikwear.com",
+      "website_url": "https://www.kikwear.com",
+      "founded_year": 1993,
+      "description": "1990s rave brand known for extremely wide-leg pants similar to JNCO."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Logo 7",
+    "current": {
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Logo_Athletic",
+      "founded_year": 1973,
+      "description": "Vintage sports apparel brand known for collegiate and professional team merchandise."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Looney Tunes",
+    "current": {
+      "description": "Warner Bros. cartoon franchise with extensive character merchandise and vintage tees."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "M&O",
+    "current": {
+      "description": "Blank apparel manufacturer known for wholesale basics and screen printing."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Magic Johnson Ts",
+    "current": {
+      "description": "Vintage sportswear featuring NBA legend Magic Johnson."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Marlboro",
+    "current": {
+      "description": "Cigarette brand with extensive vintage promotional apparel and gear."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Maurice Malone",
+    "current": {
+      "description": "1990s hip-hop fashion designer known for baggy jeans and urban style."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Mayo Spruce",
+    "current": {
+      "description": "Vintage sportswear brand known for collegiate apparel."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "McDonald's",
+    "current": {
+      "description": "Fast food giant with collectible employee uniforms and promotional merchandise."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Mecca",
+    "current": {
+      "description": "1990s-2000s urban streetwear brand popular in hip-hop fashion."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Merona",
+    "current": {
+      "description": "Target's former private label brand offering affordable clothing (discontinued 2017)."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Mickey & Co",
+    "current": {
+      "description": "Disney's vintage Mickey Mouse apparel line."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Montgomery Ward",
+    "current": {
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Montgomery_Ward",
+      "founded_year": 1872,
+      "description": "Historic American retailer (closed 2001) with various private label brands."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Mossimo",
+    "current": {
+      "description": "Target's affordable fashion brand (discontinued 2018) popular in the 2000s."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "No Boundaries",
+    "current": {
+      "description": "Walmart's teen and young adult apparel brand offering affordable fashion."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Nutmeg",
+    "current": {
+      "founded_year": 1975,
+      "description": "Vintage sportswear manufacturer known for screen-printed t-shirts from 1970s-90s."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Oneita",
+    "current": {
+      "description": "Vintage blank t-shirt manufacturer known for power tees from the 1980s-90s."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Panhandle Slim",
+    "current": {
+      "description": "American western wear brand known for pearl snap shirts and rodeo apparel."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Pepsi",
+    "current": {
+      "description": "Beverage brand with extensive vintage promotional apparel and merchandise."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Pilgrim",
+    "current": {
+      "description": "Vintage apparel brand."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Planet Hollywood",
+    "current": {
+      "description": "Restaurant chain known for collectible city-specific merchandise from the 1990s."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Power House",
+    "current": {
+      "description": "Vintage apparel brand."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Pro Player",
+    "current": {
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Pro_Player_(sportswear)",
+      "founded_year": 1989,
+      "description": "Vintage sportswear brand known for NFL and team apparel from the 1990s."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Roper",
+    "current": {
+      "domain": "roperapparel.com",
+      "website_url": "https://www.roperapparel.com",
+      "founded_year": 1970,
+      "description": "American western wear brand known for boots and rodeo apparel."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Sasson",
+    "current": {
+      "wikipedia_url": "https://en.wikipedia.org/wiki/Sasson_Jeans",
+      "founded_year": 1976,
+      "description": "1970s-80s designer jeans brand known for tight-fitting styles."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Screen Stars",
+    "current": {
+      "description": "Vintage blank t-shirt manufacturer popular in the 1980s for band tees and screen printing."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Signal",
+    "current": {
+      "description": "Vintage apparel brand."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Sonoma",
+    "current": {
+      "description": "Kohl's private label brand offering affordable casual clothing."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Sportswear",
+    "current": {
+      "description": "Generic vintage athletic apparel."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Spring Ford",
+    "current": {
+      "description": "Vintage apparel brand."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "St. John's Bay",
+    "current": {
+      "description": "JCPenney's private label brand offering classic casual clothing."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Stedman",
+    "current": {
+      "description": "European blank apparel manufacturer known for wholesale basics."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Tee Jays",
+    "current": {
+      "description": "European blank apparel manufacturer known for wholesale t-shirts."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Terra",
+    "current": {
+      "description": "Outdoor and workwear brand."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Town & Country",
+    "current": {
+      "description": "Surf brand known for apparel and accessories."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Towncraft",
+    "current": {
+      "description": "JCPenney's vintage private label brand popular mid-20th century."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Trench",
+    "current": {
+      "description": "Vintage apparel brand."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Tultex",
+    "current": {
+      "description": "Blank apparel manufacturer known for wholesale t-shirts and fleece."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "US Air Force",
+    "current": {
+      "description": "Military branch with collectible vintage flight jackets and uniform apparel."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "US Army",
+    "current": {
+      "description": "Military branch with iconic vintage M-65 jackets and uniform apparel."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "US Navy",
+    "current": {
+      "description": "Military branch with vintage pea coats, deck jackets, and uniform apparel."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "USMC",
+    "current": {
+      "description": "Marine Corps with vintage bomber jackets and military uniform apparel."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Velva Sheen",
+    "current": {
+      "domain": "velvasheen.com",
+      "website_url": "https://www.velvasheen.com",
+      "founded_year": 1932,
+      "description": "American brand known for vintage-style loop-wheeled t-shirts and sweatshirts."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Walls",
+    "current": {
+      "domain": "walls.com",
+      "website_url": "https://www.walls.com",
+      "founded_year": 1938,
+      "description": "American workwear brand known for insulated coveralls and outdoor work clothing."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Warner Bros",
+    "current": {
+      "description": "Entertainment company with extensive Looney Tunes and character merchandise."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "Washington Dee Cee",
+    "current": {
+      "description": "Vintage workwear brand known for denim and work clothes."
+    },
+    "suggested": {}
+  },
+  {
+    "name": "White Stag",
+    "current": {
+      "description": "Walmart apparel brand offering affordable women's clothing."
+    },
+    "suggested": {}
+  }
+]

@@ -22,7 +22,6 @@
  */
 
 import { createClient } from "@supabase/supabase-js";
-import type { Database } from "../lib/supabase/types";
 import { writeFile } from "fs/promises";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -33,7 +32,8 @@ if (!supabaseUrl || !supabaseServiceKey) {
   process.exit(1);
 }
 
-const supabase = createClient<Database>(supabaseUrl, supabaseServiceKey);
+// Use untyped client to bypass schema cache for new columns
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 // Parse CLI arguments
 const args = process.argv.slice(2);
@@ -70,8 +70,8 @@ async function main() {
   const amazonLinks: { brand: string; id: number; url: string }[] = [];
 
   for (const brand of brands) {
-    // Amazon search URL for vintage clothing
-    const searchQuery = `${brand.name} vintage clothing`;
+    // Amazon search URL for brand
+    const searchQuery = brand.name;
     let url = `https://www.amazon.com/s?k=${encodeURIComponent(searchQuery)}&i=fashion`;
 
     // Add affiliate tag if provided
