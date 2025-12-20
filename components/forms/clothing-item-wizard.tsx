@@ -60,6 +60,83 @@ const ERAS: Era[] = [
   "Modern",
 ];
 
+// Countries of manufacture - includes historical regions common on vintage labels
+const ORIGIN_COUNTRIES = [
+  // Current major manufacturing countries
+  "USA",
+  "China",
+  "Vietnam",
+  "Bangladesh",
+  "India",
+  "Indonesia",
+  "Mexico",
+  "Turkey",
+  "Italy",
+  "Portugal",
+  "Japan",
+  "South Korea",
+  "Taiwan",
+  "Thailand",
+  "Cambodia",
+  "Pakistan",
+  "Sri Lanka",
+  "Philippines",
+  "Malaysia",
+  "Myanmar",
+  "Honduras",
+  "El Salvador",
+  "Guatemala",
+  "Nicaragua",
+  "Dominican Republic",
+  "Haiti",
+  "Peru",
+  "Colombia",
+  "Brazil",
+  "Morocco",
+  "Tunisia",
+  "Egypt",
+  "Mauritius",
+  "Madagascar",
+  "Kenya",
+  "Ethiopia",
+  "Jordan",
+  "Romania",
+  "Bulgaria",
+  "Poland",
+  "Czech Republic",
+  "Hungary",
+  "UK",
+  "France",
+  "Germany",
+  "Spain",
+  "Belgium",
+  "Netherlands",
+  "Ireland",
+  "Canada",
+  "Australia",
+  "New Zealand",
+  // Historical regions (common on vintage labels)
+  "Hong Kong",
+  "Macau",
+  "British Hong Kong",
+  "USSR",
+  "Soviet Union",
+  "West Germany",
+  "East Germany",
+  "Yugoslavia",
+  "Czechoslovakia",
+  "British India",
+  "Republic of China (Taiwan)",
+  "Burma (Myanmar)",
+  "Ceylon (Sri Lanka)",
+  "Rhodesia",
+  "South West Africa",
+  "Zaire",
+  // Other
+  "Unknown",
+  "Other",
+];
+
 interface ClothingFormData {
   name: string;
   type: ClothingType;
@@ -68,6 +145,7 @@ interface ClothingFormData {
   description?: string;
   color?: string;
   size?: string;
+  originCountry?: string; // Country of manufacture
   imageBase64?: string; // Photo of the clothing item itself
 }
 
@@ -95,6 +173,7 @@ export function ClothingItemWizard({ onBack, onComplete }: ClothingItemWizardPro
     description: "",
     color: "",
     size: "",
+    originCountry: "",
     imageBase64: "",
   });
 
@@ -429,6 +508,44 @@ export function ClothingItemWizard({ onBack, onComplete }: ClothingItemWizardPro
 
             <div>
               <label className="block text-sm font-medium text-stone-700 mb-2">
+                Country of Manufacture <span className="text-stone-400">(optional)</span>
+              </label>
+              <Select
+                value={clothingData.originCountry}
+                onChange={(e) =>
+                  setClothingData({ ...clothingData, originCountry: e.target.value })
+                }
+              >
+                <option value="">Select country...</option>
+                <optgroup label="Common">
+                  {["USA", "China", "Vietnam", "Bangladesh", "India", "Mexico", "Italy", "Japan", "Hong Kong", "Taiwan"].map((country) => (
+                    <option key={country} value={country}>
+                      {country}
+                    </option>
+                  ))}
+                </optgroup>
+                <optgroup label="Historical (Vintage Labels)">
+                  {["USSR", "Soviet Union", "West Germany", "East Germany", "Yugoslavia", "Czechoslovakia", "British Hong Kong", "Ceylon (Sri Lanka)", "Burma (Myanmar)"].map((country) => (
+                    <option key={country} value={country}>
+                      {country}
+                    </option>
+                  ))}
+                </optgroup>
+                <optgroup label="All Countries">
+                  {ORIGIN_COUNTRIES.filter(c => !["USA", "China", "Vietnam", "Bangladesh", "India", "Mexico", "Italy", "Japan", "Hong Kong", "Taiwan", "USSR", "Soviet Union", "West Germany", "East Germany", "Yugoslavia", "Czechoslovakia", "British Hong Kong", "Ceylon (Sri Lanka)", "Burma (Myanmar)"].includes(c)).map((country) => (
+                    <option key={country} value={country}>
+                      {country}
+                    </option>
+                  ))}
+                </optgroup>
+              </Select>
+              <p className="mt-1 text-xs text-stone-500">
+                As shown on care/origin label (includes historical regions)
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-stone-700 mb-2">
                 Description <span className="text-stone-400">(optional)</span>
               </label>
               <textarea
@@ -683,6 +800,12 @@ export function ClothingItemWizard({ onBack, onComplete }: ClothingItemWizardPro
                 <div>
                   <span className="text-stone-500">Size:</span>
                   <p className="font-medium text-stone-900">{clothingData.size}</p>
+                </div>
+              )}
+              {clothingData.originCountry && (
+                <div>
+                  <span className="text-stone-500">Made in:</span>
+                  <p className="font-medium text-stone-900">{clothingData.originCountry}</p>
                 </div>
               )}
             </div>

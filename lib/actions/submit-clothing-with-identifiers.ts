@@ -25,6 +25,7 @@ interface ClothingItemData {
   description?: string;
   color?: string;
   size?: string;
+  originCountry?: string; // Country of manufacture
   imageBase64?: string; // Photo of the clothing item
 }
 
@@ -107,7 +108,8 @@ export async function submitClothingWithIdentifiers(
       slug = `${slug}-${existing.length + 1}`;
     }
 
-    const clothingItemData = {
+    // Using raw object to include origin_country not yet in types
+    const clothingItemData: Record<string, unknown> = {
       name: data.clothingItem.name,
       slug,
       type: data.clothingItem.type,
@@ -115,15 +117,16 @@ export async function submitClothingWithIdentifiers(
       description: data.clothingItem.description || null,
       color: data.clothingItem.color || null,
       size: data.clothingItem.size || null,
+      origin_country: data.clothingItem.originCountry || null,
       image_url: clothingImageUrl,
       created_by: user.id,
-      status: "pending" as const,
+      status: "pending",
       verification_score: 0,
-    } satisfies Database["public"]["Tables"]["clothing_items"]["Insert"];
+    };
 
     const { data: clothingItem, error: clothingError } = await supabase
       .from("clothing_items")
-      .insert(clothingItemData)
+      .insert(clothingItemData as Database["public"]["Tables"]["clothing_items"]["Insert"])
       .select()
       .single();
 
