@@ -98,7 +98,7 @@ export function MarketplaceHero({
                     </div>
                     <div>
                       <h3 className="font-semibold text-stone-900">Amazon</h3>
-                      <p className="text-xs text-stone-600 mt-1">New & Vintage</p>
+                      <p className="text-xs text-stone-600 mt-1">New & Official</p>
                     </div>
                     <Button
                       onClick={() => handleClick('amazon', amazonUrl)}
