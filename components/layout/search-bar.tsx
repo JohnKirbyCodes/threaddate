@@ -70,10 +70,13 @@ export function SearchBar({ className, placeholder, size = "default" }: SearchBa
   };
 
   const inputClasses = cn(
+    // Base styles with appearance-none to remove browser-specific search styling
     "w-full rounded-full border bg-white focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2",
+    // Hide native search cancel button to prevent text overlap
+    "[&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden",
     size === "large"
-      ? "h-14 border-2 border-stone-300 pl-12 pr-4 text-base"
-      : "h-10 border border-stone-300 pl-10 pr-4 text-sm"
+      ? "h-14 border-2 border-stone-300 pl-12 pr-6 text-base"
+      : "h-10 border border-stone-300 pl-10 pr-6 text-sm"
   );
 
   const iconClasses = cn(

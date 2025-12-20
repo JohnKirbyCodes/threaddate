@@ -48,6 +48,25 @@ const CATEGORIES = [
 
 const STITCH_TYPES = ["Single", "Double", "Chain", "Other"];
 
+const CLOTHING_TYPES = [
+  "T-Shirt",
+  "Sweatshirt",
+  "Hoodie",
+  "Jacket",
+  "Coat",
+  "Jeans",
+  "Pants",
+  "Shorts",
+  "Dress",
+  "Skirt",
+  "Hat",
+  "Shoes",
+  "Boots",
+  "Belt",
+  "Bag",
+  "Other",
+];
+
 export function FilterPanel({ brands }: FilterPanelProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -57,6 +76,7 @@ export function FilterPanel({ brands }: FilterPanelProps) {
   const currentEra = searchParams.get("era") || "";
   const currentStitch = searchParams.get("stitch") || "";
   const currentOrigin = searchParams.get("origin") || "";
+  const currentClothingType = searchParams.get("clothingType") || "";
 
   const updateFilter = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams);
@@ -73,7 +93,7 @@ export function FilterPanel({ brands }: FilterPanelProps) {
   };
 
   const hasFilters =
-    currentBrand || currentCategory || currentEra || currentStitch || currentOrigin;
+    currentBrand || currentCategory || currentEra || currentStitch || currentOrigin || currentClothingType;
 
   return (
     <div className="space-y-4 rounded-lg bg-white p-6 shadow-sm ring-1 ring-stone-200">
@@ -106,6 +126,24 @@ export function FilterPanel({ brands }: FilterPanelProps) {
             {brands.map((brand) => (
               <option key={brand.id} value={brand.slug}>
                 {brand.name}
+              </option>
+            ))}
+          </Select>
+        </div>
+
+        {/* Clothing Type Filter */}
+        <div>
+          <label className="mb-2 block text-sm font-medium text-stone-700">
+            Clothing Type
+          </label>
+          <Select
+            value={currentClothingType}
+            onChange={(e) => updateFilter("clothingType", e.target.value)}
+          >
+            <option value="">All Types</option>
+            {CLOTHING_TYPES.map((type) => (
+              <option key={type} value={type}>
+                {type}
               </option>
             ))}
           </Select>

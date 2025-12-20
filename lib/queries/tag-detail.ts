@@ -21,6 +21,14 @@ export async function getTagById(id: number) {
         avatar_url,
         reputation_score
       ),
+      clothing_items (
+        id,
+        name,
+        slug,
+        type,
+        era,
+        image_url
+      ),
       tag_evidence (
         id,
         image_url,

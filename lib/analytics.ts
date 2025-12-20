@@ -2,8 +2,8 @@ import { track } from '@vercel/analytics';
 
 export interface MarketplaceClickParams {
   brand: string;
-  marketplace: 'ebay' | 'poshmark' | 'depop' | 'amazon';
-  placement: 'hero' | 'era-contextual' | 'footer' | 'inline';
+  marketplace: 'ebay' | 'poshmark' | 'depop' | 'amazon' | 'etsy';
+  placement: 'hero' | 'era-contextual' | 'footer' | 'inline' | 'tag_detail';
   eraContext?: string;
   scrollDepth?: number;
 }

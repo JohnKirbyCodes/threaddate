@@ -1,12 +1,25 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { Calendar, MapPin, Tag, User, FileText, CheckCircle2, Clock, XCircle } from "lucide-react";
+import { Calendar, MapPin, Tag, User, FileText, CheckCircle2, Clock, XCircle, Shirt } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { VotingUI } from "@/components/tags/voting-ui";
 import { getTagById, getUserVoteForTag } from "@/lib/queries/tag-detail";
 import { createClient } from "@/lib/supabase/server";
 import { IdentifierSchema, BreadcrumbSchema } from "@/components/seo/json-ld";
+import { MarketplaceSearch } from "@/components/tags/marketplace-search";
+
+// Helper to check if a string looks like an email
+function looksLikeEmail(str: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(str);
+}
+
+// Get safe display name that never exposes emails
+function getSafeDisplayName(username: string | null): string {
+  if (!username) return "Contributor";
+  if (looksLikeEmail(username)) return "Contributor";
+  return username;
+}
 
 interface TagDetailPageProps {
   params: Promise<{ id: string }>;
@@ -299,6 +312,41 @@ export default async function TagDetailPage({ params }: TagDetailPageProps) {
             </CardContent>
           </Card>
 
+          {/* Clothing Item Link */}
+          {tag.clothing_items && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">From Clothing Item</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Link href={`/clothing/${tag.clothing_items.slug}`}>
+                  <div className="flex items-center gap-3 hover:opacity-80">
+                    {tag.clothing_items.image_url ? (
+                      <img
+                        src={tag.clothing_items.image_url}
+                        alt={tag.clothing_items.name}
+                        className="h-12 w-12 rounded-md object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-12 w-12 items-center justify-center rounded-md bg-stone-100">
+                        <Shirt className="h-6 w-6 text-stone-400" />
+                      </div>
+                    )}
+                    <div>
+                      <p className="font-semibold text-stone-900">
+                        {tag.clothing_items.name}
+                      </p>
+                      <p className="text-sm text-stone-500">
+                        {tag.clothing_items.type}
+                        {tag.clothing_items.era && ` · ${tag.clothing_items.era}`}
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Submitter Info */}
           <Card>
             <CardHeader>
@@ -309,7 +357,7 @@ export default async function TagDetailPage({ params }: TagDetailPageProps) {
                 {tag.profiles.avatar_url ? (
                   <img
                     src={tag.profiles.avatar_url}
-                    alt={tag.profiles.username || "User"}
+                    alt="Contributor"
                     className="h-10 w-10 rounded-full"
                   />
                 ) : (
@@ -319,7 +367,7 @@ export default async function TagDetailPage({ params }: TagDetailPageProps) {
                 )}
                 <div>
                   <p className="font-medium text-stone-900">
-                    {tag.profiles.username || "Anonymous"}
+                    {getSafeDisplayName(tag.profiles.username)}
                   </p>
                   <p className="text-sm text-stone-500">
                     {tag.profiles.reputation_score} reputation
@@ -347,6 +395,14 @@ export default async function TagDetailPage({ params }: TagDetailPageProps) {
               </p>
             </CardContent>
           </Card>
+
+          {/* Marketplace Search */}
+          <MarketplaceSearch
+            brandName={tag.brands.name}
+            brandSlug={tag.brands.slug}
+            era={tag.era}
+            category={tag.category}
+          />
         </div>
       </div>
     </div>

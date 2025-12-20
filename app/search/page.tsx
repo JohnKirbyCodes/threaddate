@@ -1,9 +1,14 @@
 import Link from "next/link";
+import { Shirt, Calendar, CheckCircle2, Clock } from "lucide-react";
 import { FilterPanel } from "@/components/search/filter-panel";
 import { TagGrid } from "@/components/tags/tag-grid";
 import { BrandCard } from "@/components/brands/brand-card";
 import { getBrands, getBrandBySlug, searchBrands } from "@/lib/queries/brands";
 import { getTags, type TagFilters } from "@/lib/queries/tags";
+import { searchClothingItemsByBrand, getFilteredClothingItems } from "@/lib/queries/clothing-items";
+import type { Database } from "@/lib/supabase/types";
+
+type ClothingType = Database["public"]["Enums"]["clothing_type_enum"];
 
 interface SearchPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -21,9 +26,33 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const stitchType = typeof search.stitch === "string" ? search.stitch as TagFilters["stitchType"] : undefined;
   const originCountry = typeof search.origin === "string" ? search.origin : undefined;
   const status = typeof search.status === "string" ? search.status as TagFilters["status"] : undefined;
+  const clothingType = typeof search.clothingType === "string" ? search.clothingType as ClothingType : undefined;
 
   // Search for matching brands if query is provided
   const matchingBrands = query ? await searchBrands(query) : [];
+
+  // Get clothing items - either by search query or by filters
+  const hasClothingFilters = clothingType || era || originCountry;
+  let matchingClothingItems: any[] = [];
+
+  if (query) {
+    // Search by brand name when query is provided
+    matchingClothingItems = await searchClothingItemsByBrand(query, 20);
+    // Apply additional filters if set
+    if (clothingType) {
+      matchingClothingItems = matchingClothingItems.filter(item => item.type === clothingType);
+    }
+    if (era) {
+      matchingClothingItems = matchingClothingItems.filter(item => item.era === era);
+    }
+  } else if (hasClothingFilters) {
+    // No query but filters are set - get filtered clothing items
+    matchingClothingItems = await getFilteredClothingItems({
+      type: clothingType,
+      era,
+      originCountry,
+    }, 20);
+  }
 
   // Get brand ID if brand slug is provided
   let brandId: number | undefined;
@@ -58,6 +87,11 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
               {matchingBrands.length} {matchingBrands.length === 1 ? "brand" : "brands"}
             </span>
           )}
+          {matchingClothingItems.length > 0 && (
+            <span className="mr-4">
+              {matchingClothingItems.length} {matchingClothingItems.length === 1 ? "clothing item" : "clothing items"}
+            </span>
+          )}
           {tags.length} {tags.length === 1 ? "identifier" : "identifiers"}
         </p>
       </div>
@@ -89,6 +123,58 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             </div>
           )}
 
+          {/* Matching Clothing Items */}
+          {matchingClothingItems.length > 0 && (
+            <div>
+              <h2 className="text-2xl font-bold text-stone-900 mb-4">Clothing Items</h2>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {matchingClothingItems.map((item: any) => (
+                  <Link
+                    key={item.id}
+                    href={`/clothing/${item.slug}`}
+                    className="group flex gap-4 rounded-lg border border-stone-200 bg-white p-4 hover:border-orange-300 hover:shadow-md transition-all"
+                  >
+                    {item.image_url ? (
+                      <img
+                        src={item.image_url}
+                        alt={item.name}
+                        className="h-20 w-20 rounded-md object-cover flex-shrink-0"
+                      />
+                    ) : (
+                      <div className="h-20 w-20 rounded-md bg-stone-100 flex items-center justify-center flex-shrink-0">
+                        <Shirt className="h-8 w-8 text-stone-400" />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="font-medium text-stone-900 group-hover:text-orange-600 truncate">
+                          {item.name}
+                        </p>
+                        {item.status === "verified" ? (
+                          <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0" />
+                        ) : item.status === "pending" ? (
+                          <Clock className="h-4 w-4 text-amber-500 flex-shrink-0" />
+                        ) : null}
+                      </div>
+                      <p className="text-sm text-stone-600 mt-0.5">{item.type}</p>
+                      {item.era && (
+                        <p className="text-sm text-stone-500 mt-1 flex items-center gap-1">
+                          <Calendar className="h-3 w-3" />
+                          {item.era}
+                        </p>
+                      )}
+                      {item.brand && (
+                        <p className="text-xs text-stone-400 mt-1">
+                          by {item.brand.name}
+                        </p>
+                      )}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Identifiers */}
           {tags.length > 0 ? (
             <div>
@@ -97,7 +183,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
               )}
               <TagGrid tags={tags} />
             </div>
-          ) : !matchingBrands.length ? (
+          ) : !matchingBrands.length && !matchingClothingItems.length ? (
             <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-stone-200 py-16 text-center">
               <div className="rounded-full bg-stone-100 p-6">
                 <svg
