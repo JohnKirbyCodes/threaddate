@@ -4,8 +4,9 @@ import { useState, useRef } from "react";
 import ReactCrop, { Crop, PixelCrop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import { Button } from "@/components/ui/button";
-import { X, Upload, ChevronDown, ChevronUp, Pencil } from "lucide-react";
+import { X, Upload, ChevronDown, ChevronUp, Pencil, Loader2 } from "lucide-react";
 import type { Database } from "@/lib/supabase/types";
+import { uploadImageToStorage } from "@/lib/utils/upload-image";
 
 type IdentifierCategory = Database["public"]["Enums"]["identifier_category_enum"];
 type Era = Database["public"]["Enums"]["era_enum"];
@@ -77,6 +78,8 @@ export function IdentifierCard({
 }: IdentifierCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditingImage, setIsEditingImage] = useState(!identifier.croppedImage);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [crop, setCrop] = useState<Crop>({
     unit: "%",
@@ -99,7 +102,7 @@ export function IdentifierCard({
     }
   };
 
-  const handleCropComplete = () => {
+  const handleCropComplete = async () => {
     if (!imgRef.current || !completedCrop) return;
 
     const image = imgRef.current;
@@ -126,10 +129,23 @@ export function IdentifierCard({
       canvas.height
     );
 
-    const croppedImage = canvas.toDataURL("image/png");
-    onUpdate(identifier.id, { croppedImage });
-    setImageSrc(null);
-    setIsEditingImage(false);
+    const base64Image = canvas.toDataURL("image/png");
+
+    // Upload to Supabase Storage
+    setIsUploading(true);
+    setUploadError(null);
+
+    try {
+      const imageUrl = await uploadImageToStorage(base64Image, "identifiers");
+      onUpdate(identifier.id, { croppedImage: imageUrl });
+      setImageSrc(null);
+      setIsEditingImage(false);
+    } catch (error: any) {
+      console.error("Upload error:", error);
+      setUploadError(error.message || "Failed to upload image");
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   // Image upload/crop view
@@ -172,8 +188,21 @@ export function IdentifierCard({
             </ReactCrop>
           </div>
 
-          <Button onClick={handleCropComplete} className="w-full">
-            Apply Crop
+          {uploadError && (
+            <div className="mb-2 p-2 rounded bg-red-50 border border-red-200">
+              <p className="text-sm text-red-600">{uploadError}</p>
+            </div>
+          )}
+
+          <Button onClick={handleCropComplete} className="w-full" disabled={isUploading}>
+            {isUploading ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Uploading...
+              </>
+            ) : (
+              "Apply Crop"
+            )}
           </Button>
         </div>
       );

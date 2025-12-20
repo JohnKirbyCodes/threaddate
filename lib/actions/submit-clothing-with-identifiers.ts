@@ -26,12 +26,12 @@ interface ClothingItemData {
   color?: string;
   size?: string;
   originCountry?: string; // Country of manufacture
-  imageBase64?: string; // Photo of the clothing item
+  imageUrl?: string; // URL to uploaded photo in Supabase Storage
 }
 
 interface IdentifierData {
   id: string;
-  croppedImage: string;
+  croppedImage: string; // Now contains URL to pre-uploaded image in Supabase Storage
   category: IdentifierCategory;
   era: Era;
   yearStart?: number;
@@ -73,29 +73,10 @@ export async function submitClothingWithIdentifiers(
   }
 
   try {
-    // Step 1: Upload clothing image if provided
-    let clothingImageUrl: string | null = null;
-    if (data.clothingItem.imageBase64) {
-      const base64Data = data.clothingItem.imageBase64.split(",")[1];
-      const buffer = Buffer.from(base64Data, "base64");
-      const clothingFilename = `clothing/${user.id}/${Date.now()}.png`;
+    // Images are now pre-uploaded on the client side
+    // Just use the URLs directly from the input
 
-      const { error: clothingUploadError } = await supabase.storage
-        .from("tag-images")
-        .upload(clothingFilename, buffer, {
-          contentType: "image/png",
-          cacheControl: "3600",
-        });
-
-      if (!clothingUploadError) {
-        const { data: urlData } = supabase.storage
-          .from("tag-images")
-          .getPublicUrl(clothingFilename);
-        clothingImageUrl = urlData.publicUrl;
-      }
-    }
-
-    // Step 2: Create clothing item
+    // Step 1: Create clothing item
     let slug = generateSlug(data.clothingItem.name);
 
     // Check for existing slug and make unique if needed
@@ -117,7 +98,7 @@ export async function submitClothingWithIdentifiers(
       color: data.clothingItem.color || null,
       size: data.clothingItem.size || null,
       origin_country: data.clothingItem.originCountry || null,
-      image_url: clothingImageUrl,
+      image_url: data.clothingItem.imageUrl || null,
       created_by: user.id,
       status: "pending",
       verification_score: 0,
@@ -134,36 +115,10 @@ export async function submitClothingWithIdentifiers(
       return { error: "Failed to create clothing item" };
     }
 
-    // Step 2: Upload images and create tags
+    // Step 2: Create tags (images are already uploaded on client)
     const tagIds: number[] = [];
 
     for (const identifier of completeIdentifiers) {
-      // Convert base64 to buffer
-      const base64Data = identifier.croppedImage.split(",")[1];
-      const buffer = Buffer.from(base64Data, "base64");
-
-      // Generate unique filename
-      const filename = `${user.id}/${Date.now()}-${identifier.id.slice(0, 8)}.png`;
-
-      // Upload image to Supabase Storage
-      const { error: uploadError } = await supabase.storage
-        .from("tag-images")
-        .upload(filename, buffer, {
-          contentType: "image/png",
-          cacheControl: "3600",
-        });
-
-      if (uploadError) {
-        console.error("Upload error:", uploadError);
-        // Continue with other identifiers, don't fail entire submission
-        continue;
-      }
-
-      // Get public URL
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from("tag-images").getPublicUrl(filename);
-
       const tagData: Database["public"]["Tables"]["tags"]["Insert"] = {
         user_id: user.id,
         brand_id: data.clothingItem.brandId,
@@ -175,7 +130,7 @@ export async function submitClothingWithIdentifiers(
         stitch_type: identifier.stitchType || null,
         origin_country: identifier.originCountry || null,
         submission_notes: identifier.submissionNotes || null,
-        image_url: publicUrl,
+        image_url: identifier.croppedImage, // Already a URL from client upload
         status: "pending",
         verification_score: 0,
         position_x: identifier.positionX ?? null,

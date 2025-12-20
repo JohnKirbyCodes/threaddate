@@ -7,9 +7,10 @@ import { BrandCombobox } from "@/components/ui/brand-combobox";
 import { IdentifierCard, AddIdentifierButton, type IdentifierData } from "./identifier-card";
 import { createBrand } from "@/lib/actions/create-brand";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Shirt, CheckCircle2, AlertCircle, Upload, MapPin, X } from "lucide-react";
+import { ArrowLeft, Shirt, CheckCircle2, AlertCircle, Upload, MapPin, X, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/supabase/types";
+import { uploadImageToStorage } from "@/lib/utils/upload-image";
 
 type ClothingType = Database["public"]["Enums"]["clothing_type_enum"];
 type Era = Database["public"]["Enums"]["era_enum"];
@@ -146,7 +147,7 @@ interface ClothingFormData {
   color?: string;
   size?: string;
   originCountry?: string; // Country of manufacture
-  imageBase64?: string; // Photo of the clothing item itself
+  imageUrl?: string; // URL to uploaded photo in Supabase Storage
 }
 
 interface ClothingItemWizardProps {
@@ -157,6 +158,7 @@ interface ClothingItemWizardProps {
 export function ClothingItemWizard({ onBack, onComplete }: ClothingItemWizardProps) {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploadingClothingImage, setIsUploadingClothingImage] = useState(false);
   const { toast } = useToast();
   const clothingImageRef = useRef<HTMLImageElement>(null);
 
@@ -174,7 +176,7 @@ export function ClothingItemWizard({ onBack, onComplete }: ClothingItemWizardPro
     color: "",
     size: "",
     originCountry: "",
-    imageBase64: "",
+    imageUrl: "",
   });
 
   // For click-to-place: which identifier is being placed
@@ -247,15 +249,34 @@ export function ClothingItemWizard({ onBack, onComplete }: ClothingItemWizardPro
     }
   };
 
-  // Handle clothing image upload
-  const handleClothingImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Handle clothing image upload - uploads directly to Supabase Storage
+  const handleClothingImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setClothingData({ ...clothingData, imageBase64: reader.result as string });
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    setIsUploadingClothingImage(true);
+
+    try {
+      // Read file as base64
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+
+      // Upload to Supabase Storage
+      const imageUrl = await uploadImageToStorage(base64, "clothing");
+      setClothingData({ ...clothingData, imageUrl });
+    } catch (error: any) {
+      console.error("Upload error:", error);
+      toast({
+        title: "Upload failed",
+        description: error.message || "Failed to upload image. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploadingClothingImage(false);
     }
   };
 
@@ -564,16 +585,21 @@ export function ClothingItemWizard({ onBack, onComplete }: ClothingItemWizardPro
               <label className="block text-sm font-medium text-stone-700 mb-2">
                 Photo of the Item <span className="text-stone-400">(optional but recommended)</span>
               </label>
-              {clothingData.imageBase64 ? (
+              {isUploadingClothingImage ? (
+                <div className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-orange-300 rounded-lg bg-orange-50">
+                  <Loader2 className="h-8 w-8 text-orange-600 animate-spin mb-2" />
+                  <p className="text-sm text-orange-600">Uploading image...</p>
+                </div>
+              ) : clothingData.imageUrl ? (
                 <div className="relative">
                   <img
-                    src={clothingData.imageBase64}
+                    src={clothingData.imageUrl}
                     alt="Clothing item"
                     className="w-full max-h-64 object-contain rounded-lg border border-stone-200"
                   />
                   <button
                     type="button"
-                    onClick={() => setClothingData({ ...clothingData, imageBase64: "" })}
+                    onClick={() => setClothingData({ ...clothingData, imageUrl: "" })}
                     className="absolute top-2 right-2 rounded-full bg-white/90 p-1.5 shadow-sm hover:bg-white"
                   >
                     <X className="h-4 w-4 text-stone-600" />
@@ -634,7 +660,7 @@ export function ClothingItemWizard({ onBack, onComplete }: ClothingItemWizardPro
           )}
 
           {/* Click-to-place on clothing image */}
-          {clothingData.imageBase64 && (
+          {clothingData.imageUrl && (
             <div className="rounded-lg border border-stone-200 bg-white p-4">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
@@ -668,7 +694,7 @@ export function ClothingItemWizard({ onBack, onComplete }: ClothingItemWizardPro
               <div className="relative inline-block">
                 <img
                   ref={clothingImageRef}
-                  src={clothingData.imageBase64}
+                  src={clothingData.imageUrl}
                   alt="Clothing item"
                   onClick={handleClothingImageClick}
                   className={`max-h-80 w-auto rounded-lg border border-stone-200 ${
@@ -708,7 +734,7 @@ export function ClothingItemWizard({ onBack, onComplete }: ClothingItemWizardPro
                   defaultEra={clothingData.era}
                 />
                 {/* Place on image button - only show when clothing image exists and identifier has image */}
-                {clothingData.imageBase64 && identifier.croppedImage && (
+                {clothingData.imageUrl && identifier.croppedImage && (
                   <div className="flex items-center gap-2 pl-2">
                     {identifier.positionX !== undefined ? (
                       <span className="text-xs text-green-600 flex items-center gap-1">
@@ -773,6 +799,18 @@ export function ClothingItemWizard({ onBack, onComplete }: ClothingItemWizardPro
           {/* Clothing item summary */}
           <div className="rounded-lg border border-stone-200 bg-white p-6">
             <h3 className="font-semibold text-stone-900 mb-4">Clothing Item</h3>
+
+            {/* Show clothing image if uploaded */}
+            {clothingData.imageUrl && (
+              <div className="mb-4">
+                <img
+                  src={clothingData.imageUrl}
+                  alt="Clothing item"
+                  className="w-full max-h-48 object-contain rounded-lg border border-stone-200"
+                />
+              </div>
+            )}
+
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="text-stone-500">Name:</span>
