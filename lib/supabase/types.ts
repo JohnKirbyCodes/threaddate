@@ -36,6 +36,7 @@ export type Database = {
     Tables: {
       brands: {
         Row: {
+          amazon_url: string | null
           country_code: string | null
           created_at: string | null
           created_by: string | null
@@ -57,6 +58,7 @@ export type Database = {
           wikipedia_url: string | null
         }
         Insert: {
+          amazon_url?: string | null
           country_code?: string | null
           created_at?: string | null
           created_by?: string | null
@@ -78,6 +80,7 @@ export type Database = {
           wikipedia_url?: string | null
         }
         Update: {
+          amazon_url?: string | null
           country_code?: string | null
           created_at?: string | null
           created_by?: string | null

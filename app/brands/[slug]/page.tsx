@@ -97,10 +97,10 @@ export default async function BrandPage({
       <BrandCollectionSchema
         name={brand.name}
         slug={slug}
-        description={brand.description}
-        foundedYear={brand.founded_year}
-        logoUrl={brand.logo_url}
-        countryCode={brand.country_code}
+        description={brand.description ?? undefined}
+        foundedYear={brand.founded_year ?? undefined}
+        logoUrl={brand.logo_url ?? undefined}
+        countryCode={brand.country_code ?? undefined}
         identifierCount={tags.length}
       />
 
