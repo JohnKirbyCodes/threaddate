@@ -53,6 +53,9 @@ export interface IdentifierData {
   stitchType?: StitchType;
   originCountry?: string;
   submissionNotes?: string;
+  // Position on clothing item image (0.0-1.0 percentages)
+  positionX?: number;
+  positionY?: number;
 }
 
 interface IdentifierCardProps {
@@ -207,6 +210,17 @@ export function IdentifierCard({
             onChange={handleFileChange}
           />
         </label>
+
+        {/* Cropping Tips */}
+        <div className="mt-3 rounded-md bg-blue-50 p-3 border border-blue-100">
+          <p className="text-xs font-medium text-blue-800 mb-1">Tips for best results:</p>
+          <ul className="text-xs text-blue-700 space-y-0.5">
+            <li>• Fill the frame with the identifier</li>
+            <li>• Use good lighting, avoid shadows</li>
+            <li>• Include all text and details clearly</li>
+            <li>• Crop tightly around the identifier</li>
+          </ul>
+        </div>
       </div>
     );
   }

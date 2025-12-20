@@ -25,6 +25,7 @@ interface ClothingItemData {
   description?: string;
   color?: string;
   size?: string;
+  imageBase64?: string; // Photo of the clothing item
 }
 
 interface IdentifierData {
@@ -37,6 +38,8 @@ interface IdentifierData {
   stitchType?: StitchType;
   originCountry?: string;
   submissionNotes?: string;
+  positionX?: number; // Position on clothing image (0.0-1.0)
+  positionY?: number;
 }
 
 interface SubmitClothingWithIdentifiersInput {
@@ -69,7 +72,29 @@ export async function submitClothingWithIdentifiers(
   }
 
   try {
-    // Step 1: Create clothing item
+    // Step 1: Upload clothing image if provided
+    let clothingImageUrl: string | null = null;
+    if (data.clothingItem.imageBase64) {
+      const base64Data = data.clothingItem.imageBase64.split(",")[1];
+      const buffer = Buffer.from(base64Data, "base64");
+      const clothingFilename = `clothing/${user.id}/${Date.now()}.png`;
+
+      const { error: clothingUploadError } = await supabase.storage
+        .from("tag-images")
+        .upload(clothingFilename, buffer, {
+          contentType: "image/png",
+          cacheControl: "3600",
+        });
+
+      if (!clothingUploadError) {
+        const { data: urlData } = supabase.storage
+          .from("tag-images")
+          .getPublicUrl(clothingFilename);
+        clothingImageUrl = urlData.publicUrl;
+      }
+    }
+
+    // Step 2: Create clothing item
     let slug = generateSlug(data.clothingItem.name);
 
     // Check for existing slug and make unique if needed
@@ -90,6 +115,7 @@ export async function submitClothingWithIdentifiers(
       description: data.clothingItem.description || null,
       color: data.clothingItem.color || null,
       size: data.clothingItem.size || null,
+      image_url: clothingImageUrl,
       created_by: user.id,
       status: "pending" as const,
       verification_score: 0,
@@ -136,8 +162,8 @@ export async function submitClothingWithIdentifiers(
         data: { publicUrl },
       } = supabase.storage.from("tag-images").getPublicUrl(filename);
 
-      // Insert tag record
-      const tagData = {
+      // Insert tag record (using raw object to include position fields not yet in types)
+      const tagData: Record<string, unknown> = {
         user_id: user.id,
         brand_id: data.clothingItem.brandId,
         clothing_item_id: clothingItem.id,
@@ -149,13 +175,16 @@ export async function submitClothingWithIdentifiers(
         origin_country: identifier.originCountry || null,
         submission_notes: identifier.submissionNotes || null,
         image_url: publicUrl,
-        status: "pending" as const,
+        status: "pending",
         verification_score: 0,
-      } satisfies Database["public"]["Tables"]["tags"]["Insert"];
+        // Position on clothing image (if marked)
+        position_x: identifier.positionX ?? null,
+        position_y: identifier.positionY ?? null,
+      };
 
       const { data: tag, error: tagError } = await supabase
         .from("tags")
-        .insert(tagData)
+        .insert(tagData as Database["public"]["Tables"]["tags"]["Insert"])
         .select()
         .single();
 

@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { BrandCombobox } from "@/components/ui/brand-combobox";
 import { IdentifierCard, AddIdentifierButton, type IdentifierData } from "./identifier-card";
 import { createBrand } from "@/lib/actions/create-brand";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Shirt, CheckCircle2, AlertCircle } from "lucide-react";
+import { ArrowLeft, Shirt, CheckCircle2, AlertCircle, Upload, MapPin, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/supabase/types";
 
@@ -68,6 +68,7 @@ interface ClothingFormData {
   description?: string;
   color?: string;
   size?: string;
+  imageBase64?: string; // Photo of the clothing item itself
 }
 
 interface ClothingItemWizardProps {
@@ -79,6 +80,7 @@ export function ClothingItemWizard({ onBack, onComplete }: ClothingItemWizardPro
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const clothingImageRef = useRef<HTMLImageElement>(null);
 
   // Brands data
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -93,7 +95,11 @@ export function ClothingItemWizard({ onBack, onComplete }: ClothingItemWizardPro
     description: "",
     color: "",
     size: "",
+    imageBase64: "",
   });
+
+  // For click-to-place: which identifier is being placed
+  const [placingIdentifierId, setPlacingIdentifierId] = useState<string | null>(null);
 
   // Step 2: Identifiers
   const [identifiers, setIdentifiers] = useState<IdentifierData[]>([
@@ -160,6 +166,35 @@ export function ClothingItemWizard({ onBack, onComplete }: ClothingItemWizardPro
         variant: "destructive",
       });
     }
+  };
+
+  // Handle clothing image upload
+  const handleClothingImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setClothingData({ ...clothingData, imageBase64: reader.result as string });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Handle click-to-place on clothing image
+  const handleClothingImageClick = (e: React.MouseEvent<HTMLImageElement>) => {
+    if (!placingIdentifierId || !clothingImageRef.current) return;
+
+    const rect = clothingImageRef.current.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+
+    // Update the identifier with the position
+    updateIdentifier(placingIdentifierId, {
+      positionX: Math.max(0, Math.min(1, x)),
+      positionY: Math.max(0, Math.min(1, y)),
+    });
+
+    setPlacingIdentifierId(null);
   };
 
   // Identifier management
@@ -406,6 +441,41 @@ export function ClothingItemWizard({ onBack, onComplete }: ClothingItemWizardPro
                 className="w-full rounded-md border border-stone-300 px-3 py-2 focus:border-orange-500 focus:ring-orange-500"
               />
             </div>
+
+            {/* Clothing Image Upload */}
+            <div>
+              <label className="block text-sm font-medium text-stone-700 mb-2">
+                Photo of the Item <span className="text-stone-400">(optional but recommended)</span>
+              </label>
+              {clothingData.imageBase64 ? (
+                <div className="relative">
+                  <img
+                    src={clothingData.imageBase64}
+                    alt="Clothing item"
+                    className="w-full max-h-64 object-contain rounded-lg border border-stone-200"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setClothingData({ ...clothingData, imageBase64: "" })}
+                    className="absolute top-2 right-2 rounded-full bg-white/90 p-1.5 shadow-sm hover:bg-white"
+                  >
+                    <X className="h-4 w-4 text-stone-600" />
+                  </button>
+                </div>
+              ) : (
+                <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-stone-300 rounded-lg cursor-pointer bg-stone-50 hover:bg-stone-100 transition-colors">
+                  <Upload className="h-8 w-8 text-stone-400 mb-2" />
+                  <p className="text-sm text-stone-600">Upload a photo of the full garment</p>
+                  <p className="text-xs text-stone-500 mt-1">Used to mark identifier locations</p>
+                  <input
+                    type="file"
+                    className="hidden"
+                    accept="image/jpeg,image/jpg,image/png,image/webp"
+                    onChange={handleClothingImageUpload}
+                  />
+                </label>
+              )}
+            </div>
           </div>
 
           <div className="flex gap-3">
@@ -446,18 +516,105 @@ export function ClothingItemWizard({ onBack, onComplete }: ClothingItemWizardPro
             </div>
           )}
 
+          {/* Click-to-place on clothing image */}
+          {clothingData.imageBase64 && (
+            <div className="rounded-lg border border-stone-200 bg-white p-4">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-orange-600" />
+                  <span className="text-sm font-medium text-stone-900">
+                    Mark Identifier Locations
+                  </span>
+                </div>
+                {placingIdentifierId && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setPlacingIdentifierId(null)}
+                    className="text-stone-500"
+                  >
+                    Cancel
+                  </Button>
+                )}
+              </div>
+
+              {placingIdentifierId ? (
+                <p className="text-xs text-orange-600 mb-3">
+                  Click on the image where this identifier is located
+                </p>
+              ) : (
+                <p className="text-xs text-stone-500 mb-3">
+                  Click &quot;Place on image&quot; next to an identifier, then click the photo
+                </p>
+              )}
+
+              <div className="relative inline-block">
+                <img
+                  ref={clothingImageRef}
+                  src={clothingData.imageBase64}
+                  alt="Clothing item"
+                  onClick={handleClothingImageClick}
+                  className={`max-h-80 w-auto rounded-lg border border-stone-200 ${
+                    placingIdentifierId ? "cursor-crosshair" : ""
+                  }`}
+                />
+                {/* Show placed markers */}
+                {identifiers
+                  .filter((i) => i.positionX !== undefined && i.positionY !== undefined && i.croppedImage)
+                  .map((identifier, idx) => (
+                    <div
+                      key={identifier.id}
+                      className="absolute w-6 h-6 -ml-3 -mt-3 rounded-full bg-orange-600 text-white flex items-center justify-center text-xs font-bold shadow-lg border-2 border-white"
+                      style={{
+                        left: `${(identifier.positionX ?? 0) * 100}%`,
+                        top: `${(identifier.positionY ?? 0) * 100}%`,
+                      }}
+                      title={identifier.category}
+                    >
+                      {idx + 1}
+                    </div>
+                  ))}
+              </div>
+            </div>
+          )}
+
           {/* Identifier cards */}
           <div className="space-y-4">
             {identifiers.map((identifier, index) => (
-              <IdentifierCard
-                key={identifier.id}
-                identifier={identifier}
-                index={index}
-                onUpdate={updateIdentifier}
-                onRemove={removeIdentifier}
-                canRemove={identifiers.length > 1}
-                defaultEra={clothingData.era}
-              />
+              <div key={identifier.id} className="space-y-2">
+                <IdentifierCard
+                  identifier={identifier}
+                  index={index}
+                  onUpdate={updateIdentifier}
+                  onRemove={removeIdentifier}
+                  canRemove={identifiers.length > 1}
+                  defaultEra={clothingData.era}
+                />
+                {/* Place on image button - only show when clothing image exists and identifier has image */}
+                {clothingData.imageBase64 && identifier.croppedImage && (
+                  <div className="flex items-center gap-2 pl-2">
+                    {identifier.positionX !== undefined ? (
+                      <span className="text-xs text-green-600 flex items-center gap-1">
+                        <CheckCircle2 className="h-3 w-3" />
+                        Position marked
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setPlacingIdentifierId(identifier.id)}
+                        className={`text-xs flex items-center gap-1 ${
+                          placingIdentifierId === identifier.id
+                            ? "text-orange-600 font-medium"
+                            : "text-stone-500 hover:text-orange-600"
+                        }`}
+                      >
+                        <MapPin className="h-3 w-3" />
+                        {placingIdentifierId === identifier.id ? "Click on image above..." : "Place on image"}
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
             ))}
 
             <AddIdentifierButton onAdd={addIdentifier} />
