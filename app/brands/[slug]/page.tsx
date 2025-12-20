@@ -1,9 +1,11 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { Shirt, CheckCircle2, Clock } from "lucide-react";
 import { EraGroupedTagGrid } from "@/components/tags/era-grouped-tag-grid";
 import { getBrandBySlug } from "@/lib/queries/brands";
 import { getTags, type TagFilters } from "@/lib/queries/tags";
+import { getClothingItemsByBrandId } from "@/lib/queries/clothing-items";
 import { MarketplaceHero } from "@/components/brands/marketplace-hero";
 import { MarketplaceFooterCTA } from "@/components/brands/marketplace-footer-cta";
 import { BrandTimeline } from "@/components/brands/brand-timeline";
@@ -84,6 +86,9 @@ export default async function BrandPage({
 
   // Fetch era distribution for timeline
   const eraDistribution = await getBrandEraDistribution(brand.id);
+
+  // Fetch clothing items for this brand
+  const clothingItems = await getClothingItemsByBrandId(brand.id, 10);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -294,6 +299,57 @@ export default async function BrandPage({
           >
             Contribute the first identifier →
           </Link>
+        </div>
+      )}
+
+      {/* Clothing Items Section */}
+      {clothingItems.length > 0 && (
+        <div className="mt-12">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-stone-900">
+              Clothing Items
+            </h2>
+            <span className="text-sm text-stone-500">
+              {clothingItems.length} item{clothingItems.length !== 1 ? 's' : ''}
+            </span>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {clothingItems.map((item: any) => (
+              <Link
+                key={item.id}
+                href={`/clothing/${item.slug}`}
+                className="group flex gap-4 rounded-lg border border-stone-200 bg-white p-4 hover:border-orange-300 hover:shadow-md transition-all"
+              >
+                {item.image_url ? (
+                  <img
+                    src={item.image_url}
+                    alt={item.name}
+                    className="h-20 w-20 rounded-md object-cover shrink-0"
+                  />
+                ) : (
+                  <div className="h-20 w-20 rounded-md bg-stone-100 flex items-center justify-center shrink-0">
+                    <Shirt className="h-8 w-8 text-stone-400" />
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-2">
+                    <p className="font-medium text-stone-900 group-hover:text-orange-600 truncate">
+                      {item.name}
+                    </p>
+                    {item.status === "verified" ? (
+                      <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0" />
+                    ) : item.status === "pending" ? (
+                      <Clock className="h-4 w-4 text-amber-500 shrink-0" />
+                    ) : null}
+                  </div>
+                  <p className="text-sm text-stone-600 mt-0.5">{item.type}</p>
+                  {item.era && (
+                    <p className="text-sm text-stone-500 mt-1">{item.era}</p>
+                  )}
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       )}
 

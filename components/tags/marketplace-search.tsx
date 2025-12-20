@@ -78,7 +78,7 @@ export function MarketplaceSearch({
             <button
               key={mp.name}
               onClick={() => handleClick(mp.name.toLowerCase(), mp.url)}
-              className={`w-full flex items-center justify-between px-3 py-2 rounded-md border border-stone-200 text-sm font-medium transition-colors ${mp.color}`}
+              className={`w-full flex items-center justify-between px-3 py-2 rounded-md border border-stone-200 text-sm font-medium transition-colors cursor-pointer ${mp.color}`}
             >
               <span>{mp.name}</span>
               <ExternalLink className="h-4 w-4" />

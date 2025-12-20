@@ -223,6 +223,44 @@ export async function getFilteredClothingItems(
   });
 }
 
+export async function getClothingItemsByBrandId(brandId: number, limit = 20) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("clothing_items")
+    .select(`
+      id,
+      name,
+      slug,
+      type,
+      era,
+      image_url,
+      status,
+      tags!inner(brand_id)
+    `)
+    .eq("tags.brand_id", brandId)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error("Error fetching clothing items by brand ID:", error);
+    return [];
+  }
+
+  // Deduplicate (a clothing item might have multiple tags from same brand)
+  const uniqueItems = new Map();
+  for (const item of data || []) {
+    if (!uniqueItems.has(item.id)) {
+      uniqueItems.set(item.id, {
+        ...item,
+        tags: undefined,
+      });
+    }
+  }
+
+  return Array.from(uniqueItems.values());
+}
+
 export async function searchClothingItemsByBrand(brandName: string, limit = 10) {
   const supabase = await createClient();
 
