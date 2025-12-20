@@ -60,7 +60,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Brand pages
   const brandPages: MetadataRoute.Sitemap = brands.map((brand) => ({
     url: `${baseUrl}/brands/${brand.slug}`,
-    lastModified: brand.updated_at ? new Date(brand.updated_at) : new Date(),
+    lastModified: brand.created_at ? new Date(brand.created_at) : new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.8,
   }));
@@ -68,7 +68,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Tag pages
   const tagPages: MetadataRoute.Sitemap = tags.map((tag) => ({
     url: `${baseUrl}/tags/${tag.id}`,
-    lastModified: tag.updated_at ? new Date(tag.updated_at) : new Date(),
+    lastModified: tag.created_at ? new Date(tag.created_at) : new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.7,
   }));

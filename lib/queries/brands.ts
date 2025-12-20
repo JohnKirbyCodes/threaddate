@@ -178,7 +178,7 @@ export async function getAllBrandSlugs() {
 
   const { data, error } = await supabase
     .from("brands")
-    .select("slug, updated_at")
+    .select("slug, created_at")
     .order("name", { ascending: true });
 
   if (error) {

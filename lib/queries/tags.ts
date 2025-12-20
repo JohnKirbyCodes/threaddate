@@ -112,7 +112,7 @@ export async function getAllTagIds() {
 
   const { data, error } = await supabase
     .from("tags")
-    .select("id, updated_at")
+    .select("id, created_at")
     .order("created_at", { ascending: false });
 
   if (error) {
