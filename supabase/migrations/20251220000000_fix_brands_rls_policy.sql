@@ -6,6 +6,7 @@
 DROP POLICY IF EXISTS "Only admins can insert brands" ON brands;
 
 -- Create new policy allowing any authenticated user to insert brands
+DROP POLICY IF EXISTS "Authenticated users can create brands" ON brands;
 CREATE POLICY "Authenticated users can create brands"
   ON brands FOR INSERT
   WITH CHECK (auth.uid() IS NOT NULL);
