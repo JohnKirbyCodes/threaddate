@@ -7,6 +7,7 @@ import { trackMarketplaceClick } from "@/lib/analytics";
 interface MarketplaceFooterCTAProps {
   brandName: string;
   brandSlug: string;
+  amazonUrl?: string;
   ebayUrl?: string;
   poshmarkUrl?: string;
   depopUrl?: string;
@@ -15,17 +16,18 @@ interface MarketplaceFooterCTAProps {
 export function MarketplaceFooterCTA({
   brandName,
   brandSlug,
+  amazonUrl,
   ebayUrl,
   poshmarkUrl,
   depopUrl,
 }: MarketplaceFooterCTAProps) {
-  const hasAnyMarketplace = ebayUrl || poshmarkUrl || depopUrl;
+  const hasAnyMarketplace = amazonUrl || ebayUrl || poshmarkUrl || depopUrl;
 
   if (!hasAnyMarketplace) {
     return null;
   }
 
-  const handleClick = (marketplace: 'ebay' | 'poshmark' | 'depop', url: string) => {
+  const handleClick = (marketplace: 'amazon' | 'ebay' | 'poshmark' | 'depop', url: string) => {
     const scrollPercentage = Math.round(
       (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100
     );
@@ -47,10 +49,22 @@ export function MarketplaceFooterCTA({
           Ready to shop?
         </h2>
         <p className="text-lg md:text-xl text-orange-50 mb-6">
-          Join thousands of vintage collectors finding {brandName} pieces
+          Shop vintage {brandName} pieces online
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
+        <div className="flex flex-col sm:flex-row gap-3 justify-center items-center flex-wrap">
+          {amazonUrl && (
+            <Button
+              onClick={() => handleClick('amazon', amazonUrl)}
+              variant="outline"
+              className="bg-white text-amber-600 hover:bg-amber-50 border-2 border-white hover:border-amber-200 font-semibold gap-2 min-w-[160px]"
+              size="lg"
+            >
+              Shop on Amazon
+              <ExternalLink className="h-4 w-4" />
+            </Button>
+          )}
+
           {ebayUrl && (
             <Button
               onClick={() => handleClick('ebay', ebayUrl)}
@@ -89,7 +103,7 @@ export function MarketplaceFooterCTA({
         </div>
 
         <p className="text-sm text-orange-100 mt-6">
-          All marketplace links open in a new tab for easy browsing
+          All marketplace links open in a new tab
         </p>
       </div>
     </div>

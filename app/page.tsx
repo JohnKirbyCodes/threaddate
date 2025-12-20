@@ -1,17 +1,38 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { Plus, TrendingUp, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BrandGrid } from "@/components/home/brand-grid";
 import { EraSlider } from "@/components/home/era-slider";
 import { TagGrid } from "@/components/tags/tag-grid";
 import { SearchBar } from "@/components/layout/search-bar";
-import { getFeaturedBrands } from "@/lib/queries/brands";
-import { getRecentVerifiedTags } from "@/lib/queries/tags";
+import { getFeaturedBrands, getBrandStats } from "@/lib/queries/brands";
+import { getRecentVerifiedTags, getTotalTagCount } from "@/lib/queries/tags";
+
+export const metadata: Metadata = {
+  title: "ThreadDate | Date Your Vintage Clothing Finds",
+  description:
+    "Community-driven database for dating vintage clothing. Identify tags, buttons, zippers, and labels from 260+ brands across 10+ decades. Built by collectors, for collectors.",
+  openGraph: {
+    title: "ThreadDate - Vintage Clothing Identifier Database",
+    description:
+      "Date your vintage finds using our crowdsourced tag and identifier reference. Browse 260+ brands and community-verified identifiers.",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "ThreadDate | Date Your Vintage Clothing",
+    description:
+      "Community-driven database for dating vintage clothing tags, buttons, and identifiers.",
+  },
+};
 
 export default async function HomePage() {
-  const [featuredBrands, recentTags] = await Promise.all([
+  const [featuredBrands, recentTags, brandStats, totalSubmissions] = await Promise.all([
     getFeaturedBrands(),
     getRecentVerifiedTags(12),
+    getBrandStats(),
+    getTotalTagCount(),
   ]);
 
   return (
@@ -71,17 +92,17 @@ export default async function HomePage() {
         <EraSlider />
       </section>
 
-      {/* Recent Verified Tags */}
+      {/* Recent Submissions */}
       <section className="space-y-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-orange-600" />
             <h2 className="text-2xl font-bold text-stone-900">
-              Recently Verified
+              Recently Submitted
             </h2>
           </div>
           <Link
-            href="/search?status=verified"
+            href="/search"
             className="text-sm font-medium text-orange-600 hover:text-orange-700"
           >
             View All →
@@ -94,16 +115,16 @@ export default async function HomePage() {
       <section className="rounded-lg bg-gradient-to-r from-orange-600 to-orange-500 p-8 text-white">
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3 text-center">
           <div>
-            <p className="text-4xl font-bold">{featuredBrands.length}+</p>
+            <p className="text-4xl font-bold">{brandStats.totalBrands}+</p>
             <p className="mt-2 text-orange-100">Brands Catalogued</p>
           </div>
           <div>
-            <p className="text-4xl font-bold">{recentTags.length}+</p>
-            <p className="mt-2 text-orange-100">Identifiers Verified</p>
+            <p className="text-4xl font-bold">{totalSubmissions}+</p>
+            <p className="mt-2 text-orange-100">Community Submissions</p>
           </div>
           <div>
-            <p className="text-4xl font-bold">14</p>
-            <p className="mt-2 text-orange-100">Era Categories</p>
+            <p className="text-4xl font-bold">10+</p>
+            <p className="mt-2 text-orange-100">Decades Covered</p>
           </div>
         </div>
       </section>

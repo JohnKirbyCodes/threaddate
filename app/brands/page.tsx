@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { BrandsHero } from "@/components/brands/brands-hero";
 import { BrandsPageClient } from "@/components/brands/brands-page-client";
 import {
@@ -5,6 +6,18 @@ import {
   getFeaturedBrands,
   getBrandStats,
 } from "@/lib/queries/brands";
+
+export const metadata: Metadata = {
+  title: "Browse Vintage Clothing Brands | ThreadDate",
+  description:
+    "Explore 260+ vintage clothing brands. Find tag guides, identifiers, and era references for Nike, Adidas, Champion, Levi's, and more.",
+  openGraph: {
+    title: "Browse 260+ Vintage Clothing Brands | ThreadDate",
+    description:
+      "Comprehensive guide to vintage clothing brands. Date your finds with community-verified identifiers.",
+    type: "website",
+  },
+};
 
 export default async function BrandsPage() {
   // Fetch all data in parallel
@@ -20,8 +33,6 @@ export default async function BrandsPage() {
       <div className="container mx-auto px-4 pt-8">
         <BrandsHero
           totalBrands={stats.totalBrands}
-          verifiedBrands={stats.verifiedBrands}
-          erasCovered={stats.erasCovered}
           featuredBrands={featuredBrands}
         />
       </div>

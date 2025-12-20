@@ -5,6 +5,7 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { Toaster } from "sonner";
 import { Analytics } from "@vercel/analytics/next";
+import { WebsiteSchema, OrganizationSchema } from "@/components/seo/json-ld";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,6 +41,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-stone-50`}
       >
+        <WebsiteSchema />
+        <OrganizationSchema />
         <Toaster />
         <Navbar />
         <main className="min-h-screen">{children}</main>

@@ -172,3 +172,19 @@ export async function getBrandStats() {
     erasCovered: uniqueEras.size,
   };
 }
+
+export async function getAllBrandSlugs() {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("brands")
+    .select("slug, updated_at")
+    .order("name", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching brand slugs:", error);
+    return [];
+  }
+
+  return data || [];
+}

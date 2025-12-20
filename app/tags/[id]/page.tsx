@@ -1,13 +1,60 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { Calendar, MapPin, Tag, User, FileText, CheckCircle2, Clock, XCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { VotingUI } from "@/components/tags/voting-ui";
 import { getTagById, getUserVoteForTag } from "@/lib/queries/tag-detail";
 import { createClient } from "@/lib/supabase/server";
+import { IdentifierSchema, BreadcrumbSchema } from "@/components/seo/json-ld";
 
 interface TagDetailPageProps {
   params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({
+  params,
+}: TagDetailPageProps): Promise<Metadata> {
+  const { id } = await params;
+  const tagId = parseInt(id);
+
+  if (isNaN(tagId)) {
+    return {
+      title: "Identifier Not Found | ThreadDate",
+    };
+  }
+
+  const tag = await getTagById(tagId);
+
+  if (!tag) {
+    return {
+      title: "Identifier Not Found | ThreadDate",
+    };
+  }
+
+  const brandName = tag.brands?.name || "Unknown Brand";
+  const category = tag.category || "Identifier";
+  const era = tag.era || "";
+
+  const title = `${brandName} ${category}${era ? ` - ${era}` : ""} | ThreadDate`;
+  const description = `${brandName} ${category.toLowerCase()} from ${era || "vintage era"}. Community-documented vintage clothing identifier on ThreadDate.`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      images: tag.image_url ? [{ url: tag.image_url, alt: `${brandName} ${category}` }] : [],
+    },
+    twitter: {
+      card: tag.image_url ? "summary_large_image" : "summary",
+      title,
+      description,
+      images: tag.image_url ? [tag.image_url] : [],
+    },
+  };
 }
 
 export default async function TagDetailPage({ params }: TagDetailPageProps) {
@@ -58,6 +105,23 @@ export default async function TagDetailPage({ params }: TagDetailPageProps) {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* JSON-LD Structured Data */}
+      <BreadcrumbSchema
+        items={[
+          { name: "Home", url: "https://threaddate.com" },
+          { name: tag.brands.name, url: `https://threaddate.com/brands/${tag.brands.slug}` },
+          { name: `${tag.category} #${tag.id}` },
+        ]}
+      />
+      <IdentifierSchema
+        brandName={tag.brands.name}
+        category={tag.category}
+        era={tag.era}
+        imageUrl={tag.image_url}
+        datePublished={tag.created_at}
+        description={tag.submission_notes}
+      />
+
       {/* Breadcrumbs */}
       <nav className="mb-6 text-sm text-stone-600">
         <Link href="/" className="hover:text-orange-600">

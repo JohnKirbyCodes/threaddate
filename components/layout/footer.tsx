@@ -101,6 +101,9 @@ export function Footer() {
             &copy; {new Date().getFullYear()} ThreadDate. Built by vintage
             enthusiasts, for vintage enthusiasts.
           </p>
+          <p className="mt-2 text-xs text-stone-400">
+            Some links may be affiliate links. We may earn from qualifying purchases.
+          </p>
         </div>
       </div>
     </footer>

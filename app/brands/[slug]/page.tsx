@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { EraGroupedTagGrid } from "@/components/tags/era-grouped-tag-grid";
 import { getBrandBySlug } from "@/lib/queries/brands";
 import { getTags, type TagFilters } from "@/lib/queries/tags";
@@ -8,10 +9,49 @@ import { MarketplaceFooterCTA } from "@/components/brands/marketplace-footer-cta
 import { BrandTimeline } from "@/components/brands/brand-timeline";
 import { getBrandEraDistribution } from "@/lib/queries/brand-analytics";
 import { getCountryFlagEmoji, getCountryName } from "@/lib/utils/country-flags";
+import { BrandCollectionSchema, BreadcrumbSchema } from "@/components/seo/json-ld";
 
 interface BrandPageProps {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+export async function generateMetadata({
+  params,
+}: BrandPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const brand = await getBrandBySlug(slug);
+
+  if (!brand) {
+    return {
+      title: "Brand Not Found | ThreadDate",
+    };
+  }
+
+  const countryName = brand.country_code ? getCountryName(brand.country_code) : null;
+  const foundedText = brand.founded_year ? `Founded ${brand.founded_year}` : "";
+  const countryText = countryName ? `${countryName} brand` : "";
+  const descParts = [countryText, foundedText].filter(Boolean).join(". ");
+
+  const description = brand.description
+    ? `${brand.description.slice(0, 120)}...`
+    : `Date vintage ${brand.name} clothing with ThreadDate. ${descParts}. Community-verified identifiers for collectors.`;
+
+  return {
+    title: `${brand.name} Vintage Tags & Identifiers | ThreadDate`,
+    description,
+    openGraph: {
+      title: `${brand.name} Vintage Identifier Guide | ThreadDate`,
+      description,
+      type: "website",
+      images: brand.logo_url ? [{ url: brand.logo_url, alt: `${brand.name} logo` }] : [],
+    },
+    twitter: {
+      card: "summary",
+      title: `${brand.name} Vintage Tags | ThreadDate`,
+      description,
+    },
+  };
 }
 
 export default async function BrandPage({
@@ -46,6 +86,24 @@ export default async function BrandPage({
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* JSON-LD Structured Data */}
+      <BreadcrumbSchema
+        items={[
+          { name: "Home", url: "https://threaddate.com" },
+          { name: "Brands", url: "https://threaddate.com/brands" },
+          { name: brand.name },
+        ]}
+      />
+      <BrandCollectionSchema
+        name={brand.name}
+        slug={slug}
+        description={brand.description}
+        foundedYear={brand.founded_year}
+        logoUrl={brand.logo_url}
+        countryCode={brand.country_code}
+        identifierCount={tags.length}
+      />
+
       {/* Breadcrumbs */}
       <nav className="mb-6 text-sm text-stone-600">
         <Link href="/" className="hover:text-orange-600">
@@ -94,9 +152,18 @@ export default async function BrandPage({
               {brand.description}
             </p>
           )}
-          <p className="mt-2 text-sm text-stone-500">
-            {tags.length} identifier{tags.length !== 1 ? 's' : ''}
-          </p>
+          {tags.length > 0 ? (
+            <p className="mt-2 text-sm text-stone-500">
+              {tags.length} identifier{tags.length !== 1 ? 's' : ''}
+            </p>
+          ) : (
+            <Link
+              href="/submit"
+              className="mt-2 inline-block text-sm text-orange-600 hover:text-orange-700 font-medium"
+            >
+              Contribute the first identifier →
+            </Link>
+          )}
 
           {/* Small reference links (website, Wikipedia) */}
           {(brand.website_url || brand.wikipedia_url) && (
@@ -106,7 +173,7 @@ export default async function BrandPage({
                   href={brand.website_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-xs text-stone-600 hover:text-stone-900 transition-colors"
+                  className="inline-flex items-center gap-1 text-xs text-orange-600 hover:text-orange-700 transition-colors"
                 >
                   <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
@@ -119,7 +186,7 @@ export default async function BrandPage({
                   href={brand.wikipedia_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-xs text-stone-600 hover:text-stone-900 transition-colors"
+                  className="inline-flex items-center gap-1 text-xs text-orange-600 hover:text-orange-700 transition-colors"
                 >
                   <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2zm-1 4.5v3h3v2h-3v3h-2v-3H6v-2h3v-3h2z"/>
@@ -147,9 +214,11 @@ export default async function BrandPage({
         <MarketplaceHero
           brandName={brand.name}
           brandSlug={slug}
+          amazonUrl={brand.amazon_url ?? undefined}
           ebayUrl={brand.ebay_url ?? undefined}
           poshmarkUrl={brand.poshmark_url ?? undefined}
           depopUrl={brand.depop_url ?? undefined}
+          websiteUrl={brand.website_url ?? undefined}
           identifierCount={tags.length}
         />
       </div>
@@ -212,15 +281,15 @@ export default async function BrandPage({
       {tags.length > 0 ? (
         <EraGroupedTagGrid tags={tags} />
       ) : (
-        <div className="text-center py-12">
+        <div className="text-center py-12 border-2 border-dashed border-stone-200 rounded-lg">
           <p className="text-stone-600">
-            No identifiers found for {brand.name}.
+            No identifiers yet for {brand.name}.
           </p>
           <Link
             href="/submit"
             className="mt-4 inline-block text-orange-600 hover:text-orange-700 font-medium"
           >
-            Be the first to submit →
+            Contribute the first identifier →
           </Link>
         </div>
       )}
@@ -229,6 +298,7 @@ export default async function BrandPage({
       <MarketplaceFooterCTA
         brandName={brand.name}
         brandSlug={slug}
+        amazonUrl={brand.amazon_url ?? undefined}
         ebayUrl={brand.ebay_url ?? undefined}
         poshmarkUrl={brand.poshmark_url ?? undefined}
         depopUrl={brand.depop_url ?? undefined}

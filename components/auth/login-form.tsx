@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { GoogleSignInButton } from "./google-sign-in-button";
 import { AlertCircle, Loader2 } from "lucide-react";
+import { getSafeRedirectPath } from "@/lib/utils/security";
 
 export function LoginForm() {
   const router = useRouter();
@@ -33,8 +34,8 @@ export function LoginForm() {
         throw signInError;
       }
 
-      // Get redirect URL or default to home
-      const redirect = searchParams.get("redirect") || "/";
+      // Get redirect URL or default to home (validated to prevent open redirect)
+      const redirect = getSafeRedirectPath(searchParams.get("redirect"));
       router.push(redirect);
       router.refresh();
     } catch (err: any) {

@@ -1,6 +1,4 @@
 import Link from "next/link";
-import { Building2, CheckCircle2, Clock } from "lucide-react";
-import { BrandStatsCard } from "./brand-stats-card";
 import { BrandGrid } from "@/components/home/brand-grid";
 
 interface Brand {
@@ -13,15 +11,11 @@ interface Brand {
 
 interface BrandsHeroProps {
   totalBrands: number;
-  verifiedBrands: number;
-  erasCovered: number;
   featuredBrands: Brand[];
 }
 
 export function BrandsHero({
   totalBrands,
-  verifiedBrands,
-  erasCovered,
   featuredBrands,
 }: BrandsHeroProps) {
   return (
@@ -33,27 +27,8 @@ export function BrandsHero({
             Explore Vintage Brands
           </h1>
           <p className="text-lg md:text-xl text-stone-600 max-w-2xl mx-auto">
-            Discover {totalBrands} catalogued brands from every era of fashion history
+            Discover {totalBrands} catalogued brands spanning over a century of fashion history
           </p>
-        </div>
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto mb-8">
-          <BrandStatsCard
-            icon={Building2}
-            label="Total Brands"
-            value={totalBrands}
-          />
-          <BrandStatsCard
-            icon={CheckCircle2}
-            label="Verified Brands"
-            value={verifiedBrands}
-          />
-          <BrandStatsCard
-            icon={Clock}
-            label="Eras Covered"
-            value={erasCovered}
-          />
         </div>
 
         {/* Featured Brands */}

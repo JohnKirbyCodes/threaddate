@@ -1,6 +1,22 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+/**
+ * Validates that a redirect path is safe (internal only).
+ * Prevents open redirect vulnerabilities.
+ */
+function getSafeRedirectPath(path: string | null | undefined, fallback: string = "/"): string {
+  if (!path) return fallback;
+
+  // Must start with exactly one forward slash (not //)
+  if (!path.startsWith("/") || path.startsWith("//")) return fallback;
+
+  // Check for protocol indicators
+  if (path.includes("://") || path.includes("\\")) return fallback;
+
+  return path;
+}
+
 export async function middleware(request: NextRequest) {
   const { searchParams } = request.nextUrl;
   const code = searchParams.get("code");
@@ -11,7 +27,8 @@ export async function middleware(request: NextRequest) {
     const callbackUrl = new URL("/auth/callback", request.url);
     callbackUrl.searchParams.set("code", code);
     // Preserve the 'next' parameter if it exists, otherwise use current path
-    const next = searchParams.get("next") || pathname;
+    // Validate to prevent open redirect
+    const next = getSafeRedirectPath(searchParams.get("next"), pathname);
     callbackUrl.searchParams.set("next", next);
     return NextResponse.redirect(callbackUrl);
   }
@@ -45,7 +62,7 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   // Protected routes - redirect to login if not authenticated
-  const protectedRoutes = ["/submit", "/profile", "/settings"];
+  const protectedRoutes = ["/submit", "/profile", "/settings", "/admin"];
   const isProtectedRoute = protectedRoutes.some((route) =>
     request.nextUrl.pathname.startsWith(route)
   );

@@ -91,3 +91,34 @@ export async function getTags(filters: TagFilters = {}, limit = 20) {
 export async function getRecentVerifiedTags(limit = 12) {
   return getTags({ status: "verified" }, limit);
 }
+
+export async function getTotalTagCount() {
+  const supabase = await createClient();
+
+  const { count, error } = await supabase
+    .from("tags")
+    .select("*", { count: "exact", head: true });
+
+  if (error) {
+    console.error("Error fetching tag count:", error);
+    return 0;
+  }
+
+  return count || 0;
+}
+
+export async function getAllTagIds() {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("tags")
+    .select("id, updated_at")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching tag IDs:", error);
+    return [];
+  }
+
+  return data || [];
+}
