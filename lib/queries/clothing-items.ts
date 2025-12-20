@@ -301,11 +301,13 @@ export async function searchClothingItemsByBrand(brandName: string, limit = 10) 
     return [];
   }
 
-  // Extract unique clothing items with their primary brand
+  // Extract unique clothing items with the MATCHING brand (not just any brand)
   const uniqueItems = new Map();
   for (const item of data || []) {
     if (!uniqueItems.has(item.id)) {
-      const brand = item.tags?.[0]?.brands;
+      // Find the tag that matches one of our searched brand IDs
+      const matchingTag = item.tags?.find((tag: any) => brandIds.includes(tag.brand_id));
+      const brand = matchingTag?.brands;
       uniqueItems.set(item.id, {
         ...item,
         brand: brand,
