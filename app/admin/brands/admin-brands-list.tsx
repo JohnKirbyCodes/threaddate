@@ -11,7 +11,7 @@ interface Brand {
   name: string;
   slug: string;
   logo_url: string | null;
-  created_at: string;
+  created_at: string | null;
   verification_status: string | null;
 }
 
@@ -76,10 +76,12 @@ export function AdminBrandsList({ brands: initialBrands }: AdminBrandsListProps)
                   <p className="text-sm text-stone-500">
                     /brands/{brand.slug}
                   </p>
-                  <div className="flex items-center gap-2 mt-1 text-xs text-stone-400">
-                    <Clock className="h-3 w-3" />
-                    {new Date(brand.created_at).toLocaleDateString()}
-                  </div>
+                  {brand.created_at && (
+                    <div className="flex items-center gap-2 mt-1 text-xs text-stone-400">
+                      <Clock className="h-3 w-3" />
+                      {new Date(brand.created_at).toLocaleDateString()}
+                    </div>
+                  )}
                 </div>
               </div>
 
