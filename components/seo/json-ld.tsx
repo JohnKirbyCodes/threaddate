@@ -186,3 +186,40 @@ export function WebsiteSchema({
     />
   );
 }
+
+interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+interface FAQSchemaProps {
+  items: FAQItem[];
+}
+
+/**
+ * FAQPage schema for brand pages and guide pages.
+ * Helps search engines display rich snippets and LLMs extract Q&A content.
+ */
+export function FAQSchema({ items }: FAQSchemaProps) {
+  if (!items || items.length === 0) return null;
+
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map(({ question, answer }) => ({
+      "@type": "Question",
+      name: question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: answer,
+      },
+    })),
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}

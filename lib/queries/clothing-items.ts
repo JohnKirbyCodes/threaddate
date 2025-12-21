@@ -261,6 +261,22 @@ export async function getClothingItemsByBrandId(brandId: number, limit = 20) {
   return Array.from(uniqueItems.values());
 }
 
+export async function getAllClothingItemSlugs() {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("clothing_items")
+    .select("slug, created_at")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching clothing item slugs:", error);
+    return [];
+  }
+
+  return data || [];
+}
+
 export async function searchClothingItemsByBrand(brandName: string, limit = 10) {
   const supabase = await createClient();
 

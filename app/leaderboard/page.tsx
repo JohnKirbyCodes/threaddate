@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import {
   Trophy,
   Medal,
@@ -10,6 +11,21 @@ import {
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { getLeaderboardUsers, getUserStats } from "@/lib/queries/leaderboard";
+
+export const metadata: Metadata = {
+  title: "Community Leaderboard | ThreadDate",
+  description: "See the top contributors helping document and preserve vintage clothing history. Join our community of collectors and resellers cataloging fashion identifiers.",
+  openGraph: {
+    title: "Community Leaderboard | ThreadDate",
+    description: "See the top contributors helping document and preserve vintage clothing history.",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Community Leaderboard | ThreadDate",
+    description: "Top contributors preserving vintage clothing history.",
+  },
+};
 
 interface LeaderboardUser {
   id: string;

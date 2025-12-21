@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { Shirt, Calendar, CheckCircle2, Clock } from "lucide-react";
 import { FilterPanel } from "@/components/search/filter-panel";
 import { TagGrid } from "@/components/tags/tag-grid";
@@ -7,6 +8,21 @@ import { getBrands, getBrandBySlug, searchBrands } from "@/lib/queries/brands";
 import { getTags, type TagFilters } from "@/lib/queries/tags";
 import { searchClothingItemsByBrand, getFilteredClothingItems } from "@/lib/queries/clothing-items";
 import type { Database } from "@/lib/supabase/types";
+
+export const metadata: Metadata = {
+  title: "Search Vintage Clothing Identifiers | ThreadDate",
+  description: "Search and filter vintage clothing tags, labels, buttons, and zippers across 260+ brands and multiple decades. Find identifiers by brand, era, category, or origin country.",
+  openGraph: {
+    title: "Search Vintage Clothing Identifiers | ThreadDate",
+    description: "Search and filter vintage clothing tags, labels, buttons, and zippers across 260+ brands and multiple decades.",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Search Vintage Clothing Identifiers | ThreadDate",
+    description: "Search and filter vintage clothing tags, labels, buttons, and zippers across 260+ brands.",
+  },
+};
 
 type ClothingType = Database["public"]["Enums"]["clothing_type_enum"];
 

@@ -1,14 +1,16 @@
 import type { MetadataRoute } from 'next';
 import { getAllBrandSlugs } from '@/lib/queries/brands';
 import { getAllTagIds } from '@/lib/queries/tags';
+import { getAllClothingItemSlugs } from '@/lib/queries/clothing-items';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://threaddate.com';
 
   // Fetch all dynamic routes
-  const [brands, tags] = await Promise.all([
+  const [brands, tags, clothingItems] = await Promise.all([
     getAllBrandSlugs(),
     getAllTagIds(),
+    getAllClothingItemSlugs(),
   ]);
 
   // Static pages
@@ -73,5 +75,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...brandPages, ...tagPages];
+  // Clothing item pages
+  const clothingPages: MetadataRoute.Sitemap = clothingItems.map((item) => ({
+    url: `${baseUrl}/clothing/${item.slug}`,
+    lastModified: item.created_at ? new Date(item.created_at) : new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }));
+
+  return [...staticPages, ...brandPages, ...tagPages, ...clothingPages];
 }

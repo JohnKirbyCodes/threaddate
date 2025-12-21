@@ -11,8 +11,9 @@ import { MarketplaceFooterCTA } from "@/components/brands/marketplace-footer-cta
 import { BrandTimeline } from "@/components/brands/brand-timeline";
 import { getBrandEraDistribution } from "@/lib/queries/brand-analytics";
 import { getCountryFlagEmoji, getCountryName } from "@/lib/utils/country-flags";
-import { BrandCollectionSchema, BreadcrumbSchema } from "@/components/seo/json-ld";
+import { BrandCollectionSchema, BreadcrumbSchema, FAQSchema } from "@/components/seo/json-ld";
 import { ImageLightbox } from "@/components/ui/image-lightbox";
+import { generateBrandFAQs } from "@/lib/utils/brand-faqs";
 
 interface BrandPageProps {
   params: Promise<{ slug: string }>;
@@ -108,6 +109,16 @@ export default async function BrandPage({
         logoUrl={brand.logo_url ?? undefined}
         countryCode={brand.country_code ?? undefined}
         identifierCount={tags.length}
+      />
+      <FAQSchema
+        items={generateBrandFAQs({
+          name: brand.name,
+          foundedYear: brand.founded_year,
+          countryCode: brand.country_code,
+          countryName: brand.country_code ? getCountryName(brand.country_code) : null,
+          tagCount: tags.length,
+          eras: eraDistribution.map(e => e.era),
+        })}
       />
 
       {/* Breadcrumbs */}
