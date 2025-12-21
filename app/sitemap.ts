@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next';
 import { getAllBrandSlugs } from '@/lib/queries/brands';
 import { getAllTagIds } from '@/lib/queries/tags';
 import { getAllClothingItemSlugs } from '@/lib/queries/clothing-items';
+import { FEATURED_ERAS, ERA_TO_SLUG } from '@/lib/queries/eras';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://threaddate.com';
@@ -83,5 +84,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...brandPages, ...tagPages, ...clothingPages];
+  // Era hub pages
+  const eraPages: MetadataRoute.Sitemap = FEATURED_ERAS.map((era) => ({
+    url: `${baseUrl}/eras/${ERA_TO_SLUG[era]}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.8,
+  }));
+
+  return [...staticPages, ...eraPages, ...brandPages, ...tagPages, ...clothingPages];
 }
