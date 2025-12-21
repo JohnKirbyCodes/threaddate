@@ -3,6 +3,7 @@ import { getAllBrandSlugs } from '@/lib/queries/brands';
 import { getAllTagIds } from '@/lib/queries/tags';
 import { getAllClothingItemSlugs } from '@/lib/queries/clothing-items';
 import { FEATURED_ERAS, ERA_TO_SLUG } from '@/lib/queries/eras';
+import { getAllGuideSlugs } from '@/lib/data/brand-guides';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://threaddate.com';
@@ -92,5 +93,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  return [...staticPages, ...eraPages, ...brandPages, ...tagPages, ...clothingPages];
+  // Guide pages (pillar content)
+  const guideSlugs = getAllGuideSlugs();
+  const guidePages: MetadataRoute.Sitemap = [
+    {
+      url: `${baseUrl}/guides`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.9,
+    },
+    ...guideSlugs.map((slug) => ({
+      url: `${baseUrl}/guides/${slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.9,
+    })),
+  ];
+
+  return [...staticPages, ...guidePages, ...eraPages, ...brandPages, ...tagPages, ...clothingPages];
 }
