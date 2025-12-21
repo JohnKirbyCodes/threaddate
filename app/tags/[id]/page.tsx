@@ -6,6 +6,7 @@ import { VotingUI } from "@/components/tags/voting-ui";
 import { getTagById, getUserVoteForTag } from "@/lib/queries/tag-detail";
 import { createClient } from "@/lib/supabase/server";
 import { IdentifierSchema, BreadcrumbSchema } from "@/components/seo/json-ld";
+import { buildEbaySearchUrl } from "@/lib/utils/affiliate";
 
 // Helper to check if a string looks like an email
 function looksLikeEmail(str: string): boolean {
@@ -68,11 +69,18 @@ export async function generateMetadata({
   };
 }
 
-// Marketplace search URLs
+// Marketplace search URLs - format: "vintage {era} {brand} clothing"
 function buildSearchUrls(brandName: string, era?: string) {
-  const query = encodeURIComponent(`vintage ${brandName}${era && !era.includes("Modern") ? ` ${era}` : ""}`);
+  // Build era-specific query: "vintage 1970s Sears clothing"
+  const isModern = era?.includes("Modern");
+  const searchQuery = isModern
+    ? `${brandName} clothing`
+    : `vintage${era ? ` ${era}` : ""} ${brandName} clothing`;
+  const query = encodeURIComponent(searchQuery);
+
   return {
-    ebay: `https://www.ebay.com/sch/i.html?_nkw=${query}&_sacat=11450`,
+    ebay: buildEbaySearchUrl(searchQuery),
+    amazon: `https://www.amazon.com/s?k=${query}&i=fashion`,
     poshmark: `https://poshmark.com/search?query=${query}&type=listings`,
     depop: `https://www.depop.com/search/?q=${query}`,
     etsy: `https://www.etsy.com/search?q=${query}&explicit=1&category=clothing`,
@@ -313,43 +321,58 @@ export default async function TagDetailPage({ params }: TagDetailPageProps) {
           {/* Shop Similar */}
           <div className="bg-white rounded-xl border border-stone-200 p-4">
             <p className="text-xs font-medium text-stone-500 uppercase tracking-wide mb-3">Shop Similar</p>
-            <div className="grid grid-cols-2 gap-2">
-              <a
-                href={marketplaceUrls.ebay}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-stone-200 text-sm font-medium text-blue-600 hover:bg-blue-50 hover:border-blue-200 transition-colors cursor-pointer"
-              >
-                eBay
-                <ExternalLink className="h-3.5 w-3.5" />
-              </a>
-              <a
-                href={marketplaceUrls.poshmark}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-stone-200 text-sm font-medium text-rose-600 hover:bg-rose-50 hover:border-rose-200 transition-colors cursor-pointer"
-              >
-                Poshmark
-                <ExternalLink className="h-3.5 w-3.5" />
-              </a>
-              <a
-                href={marketplaceUrls.depop}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-stone-200 text-sm font-medium text-red-600 hover:bg-red-50 hover:border-red-200 transition-colors cursor-pointer"
-              >
-                Depop
-                <ExternalLink className="h-3.5 w-3.5" />
-              </a>
-              <a
-                href={marketplaceUrls.etsy}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-stone-200 text-sm font-medium text-orange-600 hover:bg-orange-50 hover:border-orange-200 transition-colors cursor-pointer"
-              >
-                Etsy
-                <ExternalLink className="h-3.5 w-3.5" />
-              </a>
+            <div className="space-y-2">
+              {/* Primary marketplaces */}
+              <div className="grid grid-cols-2 gap-2">
+                <a
+                  href={marketplaceUrls.ebay}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-stone-200 text-sm font-medium text-blue-600 hover:bg-blue-50 hover:border-blue-200 transition-colors cursor-pointer"
+                >
+                  eBay
+                  <ExternalLink className="h-3.5 w-3.5" />
+                </a>
+                <a
+                  href={marketplaceUrls.amazon}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-stone-200 text-sm font-medium text-amber-700 hover:bg-amber-50 hover:border-amber-200 transition-colors cursor-pointer"
+                >
+                  Amazon
+                  <ExternalLink className="h-3.5 w-3.5" />
+                </a>
+              </div>
+              {/* Secondary marketplaces */}
+              <div className="grid grid-cols-3 gap-2">
+                <a
+                  href={marketplaceUrls.poshmark}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border border-stone-200 text-xs font-medium text-rose-600 hover:bg-rose-50 hover:border-rose-200 transition-colors cursor-pointer"
+                >
+                  Poshmark
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+                <a
+                  href={marketplaceUrls.depop}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border border-stone-200 text-xs font-medium text-red-600 hover:bg-red-50 hover:border-red-200 transition-colors cursor-pointer"
+                >
+                  Depop
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+                <a
+                  href={marketplaceUrls.etsy}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border border-stone-200 text-xs font-medium text-orange-600 hover:bg-orange-50 hover:border-orange-200 transition-colors cursor-pointer"
+                >
+                  Etsy
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+              </div>
             </div>
           </div>
 

@@ -190,6 +190,18 @@ export default async function ClothingPage({ params }: ClothingPageProps) {
                     Made in {item.origin_country}
                   </span>
                 )}
+                {item.style_number && (
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-stone-100 px-3 py-1">
+                    <FileText className="h-3.5 w-3.5" />
+                    #{item.style_number}
+                  </span>
+                )}
+                {item.year_manufactured && (
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-stone-100 px-3 py-1">
+                    <Calendar className="h-3.5 w-3.5" />
+                    {item.year_manufactured}
+                  </span>
+                )}
               </div>
 
               {item.description && (
@@ -316,68 +328,6 @@ export default async function ClothingPage({ params }: ClothingPageProps) {
 
         {/* Sidebar */}
         <div className="space-y-6">
-          {/* Item Details */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5" />
-                Details
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3 text-sm">
-              <div className="flex justify-between">
-                <span className="text-stone-500">Type</span>
-                <span className="font-medium text-stone-900">{item.type}</span>
-              </div>
-              {item.era && (
-                <div className="flex justify-between">
-                  <span className="text-stone-500">Era</span>
-                  <span className="font-medium text-stone-900">{item.era}</span>
-                </div>
-              )}
-              {item.color && (
-                <div className="flex justify-between">
-                  <span className="text-stone-500">Color</span>
-                  <span className="font-medium text-stone-900">{item.color}</span>
-                </div>
-              )}
-              {item.size && (
-                <div className="flex justify-between">
-                  <span className="text-stone-500">Size</span>
-                  <span className="font-medium text-stone-900">{item.size}</span>
-                </div>
-              )}
-              {item.origin_country && (
-                <div className="flex justify-between">
-                  <span className="text-stone-500">Made In</span>
-                  <span className="font-medium text-stone-900">
-                    {countryFlag} {item.origin_country}
-                  </span>
-                </div>
-              )}
-              {item.style_number && (
-                <div className="flex justify-between">
-                  <span className="text-stone-500">Style Number</span>
-                  <span className="font-medium text-stone-900">{item.style_number}</span>
-                </div>
-              )}
-              {item.year_manufactured && (
-                <div className="flex justify-between">
-                  <span className="text-stone-500">Year Made</span>
-                  <span className="font-medium text-stone-900">{item.year_manufactured}</span>
-                </div>
-              )}
-              <div className="flex justify-between">
-                <span className="text-stone-500">Identifiers</span>
-                <span className="font-medium text-stone-900">{identifiers.length}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-stone-500">Status</span>
-                {getStatusBadge(item.status)}
-              </div>
-            </CardContent>
-          </Card>
-
           {/* Brand Links */}
           {identifiers.length > 0 && (
             <Card>
@@ -397,21 +347,28 @@ export default async function ClothingPage({ params }: ClothingPageProps) {
                           className="flex items-center gap-3 rounded-lg border border-stone-200 p-3 hover:border-orange-300 hover:bg-orange-50/50 transition-colors"
                         >
                           {brand.logo_url ? (
-                            <img
-                              src={brand.logo_url}
-                              alt={brand.name}
-                              className="h-10 w-10 rounded-md object-contain"
-                            />
-                          ) : (
-                            <div className="h-10 w-10 rounded-md bg-stone-100 flex items-center justify-center">
-                              <span className="text-lg font-bold text-stone-400">
-                                {brand.name.charAt(0)}
+                            <>
+                              <img
+                                src={brand.logo_url}
+                                alt={brand.name}
+                                className="h-12 w-12 rounded-md object-contain bg-white p-1 border border-stone-100"
+                              />
+                              <span className="text-sm text-stone-500">
+                                {brand.name}
                               </span>
-                            </div>
+                            </>
+                          ) : (
+                            <>
+                              <div className="h-12 w-12 rounded-md bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
+                                <span className="text-xl font-bold text-white">
+                                  {brand.name.charAt(0)}
+                                </span>
+                              </div>
+                              <span className="font-medium text-stone-900">
+                                {brand.name}
+                              </span>
+                            </>
                           )}
-                          <span className="font-medium text-stone-900 hover:text-orange-600">
-                            {brand.name}
-                          </span>
                         </Link>
                       );
                     })}

@@ -3,6 +3,7 @@
 import { ExternalLink, ShoppingBag } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { trackMarketplaceClick } from "@/lib/analytics";
+import { EBAY_AFFILIATE_PARAMS } from "@/lib/utils/affiliate";
 
 interface MarketplaceSearchProps {
   brandName: string;
@@ -20,7 +21,7 @@ function buildSearchQuery(brandName: string, era?: string): string {
 }
 
 function buildEbayUrl(query: string): string {
-  return `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(query)}&_sacat=11450&LH_Complete=1`;
+  return `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(query)}&_sacat=11450&LH_Complete=1${EBAY_AFFILIATE_PARAMS}`;
 }
 
 function buildPoshmarkUrl(query: string): string {
