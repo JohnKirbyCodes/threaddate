@@ -7,7 +7,7 @@ import { EraSlider } from "@/components/home/era-slider";
 import { TagGrid } from "@/components/tags/tag-grid";
 import { SearchBar } from "@/components/layout/search-bar";
 import { getFeaturedBrands, getBrandStats } from "@/lib/queries/brands";
-import { getRecentVerifiedTags, getTotalTagCount } from "@/lib/queries/tags";
+import { getRecentTags, getTotalTagCount } from "@/lib/queries/tags";
 
 export const metadata: Metadata = {
   title: "ThreadDate | Date Your Vintage Clothing Finds",
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 export default async function HomePage() {
   const [featuredBrands, recentTags, brandStats, totalSubmissions] = await Promise.all([
     getFeaturedBrands(),
-    getRecentVerifiedTags(12),
+    getRecentTags(12),
     getBrandStats(),
     getTotalTagCount(),
   ]);

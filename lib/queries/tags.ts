@@ -92,6 +92,41 @@ export async function getRecentVerifiedTags(limit = 12) {
   return getTags({ status: "verified" }, limit);
 }
 
+export async function getRecentTags(limit = 12) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("tags")
+    .select(
+      `
+      *,
+      brands (
+        id,
+        name,
+        slug,
+        logo_url
+      ),
+      clothing_items (
+        id,
+        name,
+        slug,
+        type,
+        color
+      )
+    `
+    )
+    .in("status", ["verified", "pending"])
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error("Error fetching recent tags:", error);
+    return [];
+  }
+
+  return data || [];
+}
+
 export async function getTotalTagCount() {
   const supabase = await createClient();
 
