@@ -5,7 +5,7 @@ import { Calendar, MapPin, Tag, ExternalLink, CheckCircle2, Clock, XCircle, Shir
 import { VotingUI } from "@/components/tags/voting-ui";
 import { getTagById, getUserVoteForTag } from "@/lib/queries/tag-detail";
 import { createClient } from "@/lib/supabase/server";
-import { IdentifierSchema, BreadcrumbSchema } from "@/components/seo/json-ld";
+import { IdentifierSchema, BreadcrumbSchema, AggregateRatingSchema } from "@/components/seo/json-ld";
 import { buildEbaySearchUrl } from "@/lib/utils/affiliate";
 
 // Helper to check if a string looks like an email
@@ -151,6 +151,14 @@ export default async function TagDetailPage({ params }: TagDetailPageProps) {
         datePublished={tag.created_at}
         description={tag.submission_notes}
       />
+      {/* Only show aggregate rating for verified tags with positive scores */}
+      {tag.status === "verified" && (tag.verification_score || 0) > 0 && (
+        <AggregateRatingSchema
+          itemName={`${tag.brands.name} ${tag.category}${tag.era ? ` - ${tag.era}` : ""}`}
+          ratingValue={5}
+          ratingCount={tag.verification_score || 0}
+        />
+      )}
 
       {/* Header */}
       <div className="mb-6">

@@ -187,6 +187,49 @@ export function WebsiteSchema({
   );
 }
 
+interface AggregateRatingSchemaProps {
+  itemName: string;
+  ratingValue: number;
+  ratingCount: number;
+  bestRating?: number;
+  worstRating?: number;
+}
+
+/**
+ * AggregateRating schema for verified identifiers.
+ * Shows community verification as a rating in search results.
+ */
+export function AggregateRatingSchema({
+  itemName,
+  ratingValue,
+  ratingCount,
+  bestRating = 5,
+  worstRating = 1,
+}: AggregateRatingSchemaProps) {
+  // Only render if we have valid rating data
+  if (ratingCount <= 0) return null;
+
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: itemName,
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: Math.min(ratingValue, bestRating),
+      ratingCount,
+      bestRating,
+      worstRating,
+    },
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
 interface FAQItem {
   question: string;
   answer: string;
