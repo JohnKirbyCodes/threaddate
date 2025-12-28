@@ -115,6 +115,7 @@ export async function getRecentTags(limit = 12) {
       )
     `
     )
+    .eq("category", "Neck Tag")
     .in("status", ["verified", "pending"])
     .order("created_at", { ascending: false })
     .limit(limit);

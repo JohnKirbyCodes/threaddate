@@ -57,13 +57,15 @@ export function TagCard({
             category={category}
           />
 
-          {/* Status Badge */}
-          <div
-            className={`absolute top-2 right-2 flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium ${statusConfig[safeStatus].bg} ${statusConfig[safeStatus].color}`}
-          >
-            <StatusIcon className="h-3 w-3" />
-            {safeStatus}
-          </div>
+          {/* Status Badge - only show for verified items */}
+          {safeStatus === "verified" && (
+            <div
+              className={`absolute top-2 right-2 flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium ${statusConfig[safeStatus].bg} ${statusConfig[safeStatus].color}`}
+            >
+              <StatusIcon className="h-3 w-3" />
+              {safeStatus}
+            </div>
+          )}
 
           {/* Verification Score */}
           {safeStatus === "verified" && verificationScore !== null && verificationScore > 0 && (
