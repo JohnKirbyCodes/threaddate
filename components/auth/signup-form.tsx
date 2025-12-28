@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { GoogleSignInButton } from "./google-sign-in-button";
 import { AlertCircle, Loader2 } from "lucide-react";
+import { trackAuthSignup } from "@/lib/analytics";
 
 export function SignUpForm() {
   const router = useRouter();
@@ -65,6 +66,11 @@ export function SignUpForm() {
       });
 
       if (signUpError) {
+        trackAuthSignup({
+          method: 'email',
+          success: false,
+          errorType: signUpError.message,
+        });
         throw signUpError;
       }
 
@@ -81,6 +87,11 @@ export function SignUpForm() {
           console.error("Error creating profile:", profileError);
         }
       }
+
+      trackAuthSignup({
+        method: 'email',
+        success: true,
+      });
 
       setSuccess(true);
 

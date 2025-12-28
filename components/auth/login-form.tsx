@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { GoogleSignInButton } from "./google-sign-in-button";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { getSafeRedirectPath } from "@/lib/utils/security";
+import { trackAuthLogin } from "@/lib/analytics";
 
 export function LoginForm() {
   const router = useRouter();
@@ -31,11 +32,23 @@ export function LoginForm() {
       });
 
       if (signInError) {
+        trackAuthLogin({
+          method: 'email',
+          success: false,
+          errorType: signInError.message,
+        });
         throw signInError;
       }
 
       // Get redirect URL or default to home (validated to prevent open redirect)
       const redirect = getSafeRedirectPath(searchParams.get("redirect"));
+
+      trackAuthLogin({
+        method: 'email',
+        success: true,
+        redirectPath: redirect,
+      });
+
       router.push(redirect);
       router.refresh();
     } catch (err: any) {

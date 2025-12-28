@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { ArrowUp, ArrowDown } from "lucide-react";
 import { castVote, removeVote } from "@/lib/actions/cast-vote";
 import { useRouter } from "next/navigation";
+import { trackVote, trackVoteUnauthenticated } from "@/lib/analytics";
 
 interface VotingUIProps {
   tagId: number;
@@ -25,6 +26,7 @@ export function VotingUI({
 
   const handleVote = async (value: 1 | -1) => {
     if (!isAuthenticated) {
+      trackVoteUnauthenticated({ tagId, redirectTriggered: true });
       router.push("/login?redirect=" + encodeURIComponent(`/tags/${tagId}`));
       return;
     }
@@ -43,6 +45,12 @@ export function VotingUI({
           // Revert on error
           setUserVote(oldVote);
           setScore(oldScore);
+        } else {
+          trackVote({
+            tagId,
+            action: 'removed',
+            previousValue: value,
+          });
         }
       });
     } else {
@@ -56,6 +64,13 @@ export function VotingUI({
           // Revert on error
           setUserVote(oldVote);
           setScore(oldScore);
+        } else {
+          trackVote({
+            tagId,
+            action: oldVote ? 'changed' : 'cast',
+            voteValue: value,
+            previousValue: oldVote ?? undefined,
+          });
         }
       });
     }

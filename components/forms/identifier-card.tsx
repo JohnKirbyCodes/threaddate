@@ -81,6 +81,7 @@ export function IdentifierCard({
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
   const [crop, setCrop] = useState<Crop>({
     unit: "%",
     width: 90,
@@ -91,14 +92,49 @@ export function IdentifierCard({
   const [completedCrop, setCompletedCrop] = useState<PixelCrop | null>(null);
   const imgRef = useRef<HTMLImageElement>(null);
 
+  // Process a file (from input or drag-and-drop)
+  const processFile = (file: File) => {
+    const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+    if (!validTypes.includes(file.type)) {
+      setUploadError("Please upload a JPEG, PNG, or WebP image.");
+      return;
+    }
+    setUploadError(null);
+    const reader = new FileReader();
+    reader.onload = () => {
+      setImageSrc(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setImageSrc(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      processFile(file);
+    }
+  };
+
+  // Drag and drop handlers
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      processFile(file);
     }
   };
 
@@ -227,10 +263,19 @@ export function IdentifierCard({
           )}
         </div>
 
-        <label className="flex flex-col items-center justify-center w-full h-32 border border-stone-300 rounded-lg cursor-pointer bg-white hover:bg-stone-50 transition-colors">
-          <Upload className="h-8 w-8 text-stone-400 mb-2" />
-          <p className="text-sm text-stone-600">
-            Click to upload identifier photo
+        <label
+          className={`flex flex-col items-center justify-center w-full h-32 border rounded-lg cursor-pointer transition-colors ${
+            isDragging
+              ? "border-orange-500 bg-orange-50 border-solid"
+              : "border-stone-300 bg-white hover:bg-stone-50"
+          }`}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+        >
+          <Upload className={`h-8 w-8 mb-2 ${isDragging ? "text-orange-500" : "text-stone-400"}`} />
+          <p className={`text-sm ${isDragging ? "text-orange-600" : "text-stone-600"}`}>
+            {isDragging ? "Drop image here" : "Drag & drop or click to upload"}
           </p>
           <input
             type="file"
@@ -239,6 +284,12 @@ export function IdentifierCard({
             onChange={handleFileChange}
           />
         </label>
+
+        {uploadError && (
+          <div className="mt-2 p-2 rounded bg-red-50 border border-red-200">
+            <p className="text-sm text-red-600">{uploadError}</p>
+          </div>
+        )}
 
         {/* Cropping Tips */}
         <div className="mt-3 rounded-md bg-blue-50 p-3 border border-blue-100">

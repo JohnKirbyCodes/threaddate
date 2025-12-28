@@ -14,6 +14,11 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/supabase/types";
+import {
+  trackSubmissionStarted,
+  trackSubmissionStepCompleted,
+  trackSubmissionCompleted,
+} from "@/lib/analytics";
 
 type ClothingType = Database["public"]["Enums"]["clothing_type_enum"];
 
@@ -91,14 +96,32 @@ export default function SubmitPage() {
     fetchData();
   }, []);
 
+  // Handle flow selection with tracking
+  const handleFlowSelect = (selectedFlow: SubmissionFlow) => {
+    if (selectedFlow) {
+      trackSubmissionStarted({ flowType: selectedFlow });
+    }
+    setFlow(selectedFlow);
+  };
+
   // Identifier flow handlers
   const handleImageNext = (croppedImage: string) => {
     setFormData({ ...formData, croppedImage });
+    trackSubmissionStepCompleted({
+      flowType: 'identifier',
+      stepNumber: 1,
+      stepName: 'image_upload',
+    });
     setStep(2);
   };
 
   const handleClassificationNext = (data: { brandId: number; category: string; clothingItemId?: number }) => {
     setFormData({ ...formData, ...data });
+    trackSubmissionStepCompleted({
+      flowType: 'identifier',
+      stepNumber: 2,
+      stepName: 'classification',
+    });
     setStep(3);
   };
 
@@ -129,6 +152,11 @@ export default function SubmitPage() {
 
   const handleDetailsNext = (data: any) => {
     setFormData({ ...formData, ...data });
+    trackSubmissionStepCompleted({
+      flowType: 'identifier',
+      stepNumber: 3,
+      stepName: 'details',
+    });
     setStep(4);
   };
 
@@ -151,6 +179,11 @@ export default function SubmitPage() {
     if (result.error) {
       setError(result.error);
     } else if (result.tagId) {
+      trackSubmissionCompleted({
+        flowType: 'identifier',
+        identifierCount: 1,
+        hasClothingImage: false,
+      });
       setSuccessData({ type: "identifier", tagId: result.tagId });
     }
   };
@@ -166,6 +199,11 @@ export default function SubmitPage() {
     }
 
     if (result.success) {
+      trackSubmissionCompleted({
+        flowType: 'clothing',
+        identifierCount: result.tagCount!,
+        hasClothingImage: !!data.clothingItem.imageUrl,
+      });
       setSuccessData({
         type: "clothing",
         clothingItemId: result.clothingItemId!,
@@ -284,7 +322,7 @@ export default function SubmitPage() {
       {/* Flow Selector */}
       {flow === null && (
         <div className="bg-white rounded-lg shadow-lg p-8">
-          <SubmissionTypeSelector onSelect={setFlow} />
+          <SubmissionTypeSelector onSelect={handleFlowSelect} />
         </div>
       )}
 

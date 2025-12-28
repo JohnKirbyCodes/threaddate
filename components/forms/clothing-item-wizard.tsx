@@ -159,6 +159,7 @@ export function ClothingItemWizard({ onBack, onComplete }: ClothingItemWizardPro
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploadingClothingImage, setIsUploadingClothingImage] = useState(false);
+  const [isDraggingClothingImage, setIsDraggingClothingImage] = useState(false);
   const { toast } = useToast();
   const clothingImageRef = useRef<HTMLImageElement>(null);
 
@@ -249,10 +250,18 @@ export function ClothingItemWizard({ onBack, onComplete }: ClothingItemWizardPro
     }
   };
 
-  // Handle clothing image upload - uploads directly to Supabase Storage
-  const handleClothingImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  // Process and upload a clothing image file
+  const processClothingImageFile = async (file: File) => {
+    // Validate file type
+    const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+    if (!validTypes.includes(file.type)) {
+      toast({
+        title: "Invalid file type",
+        description: "Please upload a JPEG, PNG, or WebP image.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setIsUploadingClothingImage(true);
 
@@ -277,6 +286,37 @@ export function ClothingItemWizard({ onBack, onComplete }: ClothingItemWizardPro
       });
     } finally {
       setIsUploadingClothingImage(false);
+    }
+  };
+
+  // Handle clothing image upload from file input
+  const handleClothingImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    await processClothingImageFile(file);
+  };
+
+  // Drag and drop handlers for clothing image
+  const handleClothingDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingClothingImage(true);
+  };
+
+  const handleClothingDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingClothingImage(false);
+  };
+
+  const handleClothingDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDraggingClothingImage(false);
+
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      await processClothingImageFile(file);
     }
   };
 
@@ -606,9 +646,20 @@ export function ClothingItemWizard({ onBack, onComplete }: ClothingItemWizardPro
                   </button>
                 </div>
               ) : (
-                <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-stone-300 rounded-lg cursor-pointer bg-stone-50 hover:bg-stone-100 transition-colors">
-                  <Upload className="h-8 w-8 text-stone-400 mb-2" />
-                  <p className="text-sm text-stone-600">Upload a photo of the full garment</p>
+                <label
+                  className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
+                    isDraggingClothingImage
+                      ? "border-orange-500 bg-orange-50"
+                      : "border-stone-300 bg-stone-50 hover:bg-stone-100"
+                  }`}
+                  onDragOver={handleClothingDragOver}
+                  onDragLeave={handleClothingDragLeave}
+                  onDrop={handleClothingDrop}
+                >
+                  <Upload className={`h-8 w-8 mb-2 ${isDraggingClothingImage ? "text-orange-500" : "text-stone-400"}`} />
+                  <p className={`text-sm ${isDraggingClothingImage ? "text-orange-600" : "text-stone-600"}`}>
+                    {isDraggingClothingImage ? "Drop image here" : "Drag & drop or click to upload"}
+                  </p>
                   <p className="text-xs text-stone-500 mt-1">Used to mark identifier locations</p>
                   <input
                     type="file"

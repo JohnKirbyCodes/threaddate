@@ -7,6 +7,7 @@ import { getTagById, getUserVoteForTag } from "@/lib/queries/tag-detail";
 import { createClient } from "@/lib/supabase/server";
 import { IdentifierSchema, BreadcrumbSchema, AggregateRatingSchema } from "@/components/seo/json-ld";
 import { buildEbaySearchUrl } from "@/lib/utils/affiliate";
+import { TagPageViewTracker } from "@/components/analytics/page-view-tracker";
 
 // Helper to check if a string looks like an email
 function looksLikeEmail(str: string): boolean {
@@ -159,6 +160,14 @@ export default async function TagDetailPage({ params }: TagDetailPageProps) {
           ratingCount={tag.verification_score || 0}
         />
       )}
+
+      {/* Analytics Page View Tracker */}
+      <TagPageViewTracker
+        tagId={tag.id}
+        brandSlug={tag.brands.slug}
+        era={tag.era ?? undefined}
+        category={tag.category}
+      />
 
       {/* Header */}
       <div className="mb-6">

@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 import { BreadcrumbSchema } from "@/components/seo/json-ld";
 import { getCountryFlagEmoji } from "@/lib/utils/country-flags";
 import { ImageLightbox } from "@/components/ui/image-lightbox";
+import { ClothingPageViewTracker } from "@/components/analytics/page-view-tracker";
 
 interface ClothingPageProps {
   params: Promise<{ slug: string }>;
@@ -120,6 +121,13 @@ export default async function ClothingPage({ params }: ClothingPageProps) {
           { name: "Clothing", url: "https://threaddate.com/clothing" },
           { name: item.name },
         ]}
+      />
+
+      {/* Analytics Page View Tracker */}
+      <ClothingPageViewTracker
+        clothingSlug={item.slug}
+        brandSlugs={identifiers.map((i: any) => i.brands?.slug).filter(Boolean)}
+        era={item.era ?? undefined}
       />
 
       {/* Breadcrumb */}

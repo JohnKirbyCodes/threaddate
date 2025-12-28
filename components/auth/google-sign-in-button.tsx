@@ -1,10 +1,14 @@
 "use client";
 
 import { createClient } from "@/lib/supabase/client";
+import { trackAuthOAuthStarted } from "@/lib/analytics";
 
 export function GoogleSignInButton() {
   const handleSignIn = async () => {
     const supabase = createClient();
+
+    // Track OAuth flow started
+    trackAuthOAuthStarted({ provider: 'google' });
 
     // Get current URL's redirect parameter
     const searchParams = new URLSearchParams(window.location.search);
